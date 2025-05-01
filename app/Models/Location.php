@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Location extends Model {
     protected $fillable = [
@@ -10,4 +11,8 @@ class Location extends Model {
         'state',
         'country',
     ];
+
+    public function employments(): HasMany {
+        return $this->hasMany( Employment::class );
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
@@ -25,6 +26,18 @@ class User extends Authenticatable {
         'password',
     ];
 
+    public function isEmployer(): bool {
+        return $this->hasRole( 'employer' );
+    }
+
+    public function isJobSeeker(): bool {
+        return $this->hasRole( 'job_seeker' );
+    }
+
+    public function isAdmin(): bool {
+        return $this->hasRole( 'admin' );
+    }
+
     public function companyProfile(): HasOne {
         return $this->hasOne( CompanyProfile::class );
     }
@@ -32,6 +45,15 @@ class User extends Authenticatable {
     public function seekerProfile(): HasOne {
         return $this->hasOne( SeekerProfile::class );
     }
+
+    public function employments(): HasMany {
+        return $this->hasMany( Employment::class );
+    }
+
+    public function applications(): HasMany {
+        return $this->hasMany( Application::class );
+    }
+
     /**
     * The attributes that should be hidden for serialization.
     *

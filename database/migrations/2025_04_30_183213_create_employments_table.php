@@ -11,13 +11,16 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('company_profiles', function (Blueprint $table) {
+        Schema::create('employments', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->string('company_name');
-            $table->string('website')->nullable();
-            $table->string('industry');
-            $table->text('bio')->nullable();
+            $table->foreignId('category_id')->constrained()->onDelete('cascade');
+            $table->foreignId('location_id')->constrained()->onDelete('cascade');
+            $table->string('title');
+            $table->text('description');
+            $table->string('type');
+            $table->string('salary_range');
+            $table->date('expires_at');
             $table->timestamps();
         });
     }
@@ -27,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('company_profiles');
+        Schema::dropIfExists('employments');
     }
 };

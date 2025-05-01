@@ -13,8 +13,15 @@ return new class extends Migration
     {
         Schema::create('seeker_profiles', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id')->constrained()->onDelete('cascade');
+            $table->string('resume_path')->nullable();
+            $table->text('skills')->nullable();
+            $table->text('experience')->nullable();
+            $table->text('education')->nullable();
             $table->timestamps();
         });
+
+        
     }
 
     /**

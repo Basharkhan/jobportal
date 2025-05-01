@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class SeekerProfile extends Model {
     protected $fillable = [
@@ -12,4 +13,8 @@ class SeekerProfile extends Model {
         'experience',
         'education',
     ];
+
+    public function user(): BelongsTo {
+        return $this->belongsTo( User::class );
+    }
 }
