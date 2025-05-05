@@ -2,8 +2,8 @@
 
 namespace App\Providers;
 
-use App\Repositories\AuthRepository;
-use App\Repositories\Interfaces\AuthRepositoryInterface;
+use App\Repositories\Auth\AdminAuthRepository;
+use App\Repositories\Interfaces\Auth\AdminAuthRepositoryInterface;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider {
@@ -12,7 +12,7 @@ class AppServiceProvider extends ServiceProvider {
     */
 
     public function register(): void {
-
+        $this->app->bind( AdminAuthRepositoryInterface::class, AdminAuthRepository::class );
     }
 
     /**
@@ -20,6 +20,6 @@ class AppServiceProvider extends ServiceProvider {
     */
 
     public function boot(): void {
-        //
+
     }
 }

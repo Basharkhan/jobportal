@@ -3,13 +3,13 @@
 namespace App\Http\Controllers\Api\Auth;
 
 use App\Http\Requests\Auth\AdminAuthRequest;
+use App\Http\Requests\Auth\AdminLoginRequest;
 use App\Services\Auth\AdminAuthService;
 use Illuminate\Http\Response;
 use Exception;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
-use Throwable;
 
 class AdminAuthController {
     public function __construct( protected AdminAuthService $adminAuthService ) {
@@ -18,7 +18,7 @@ class AdminAuthController {
 
     public function registerAdmin( AdminAuthRequest $adminAuthRequest ) {
         try {
-            $admin = $this->adminAuthService->register( $adminAuthRequest->validated() );
+            $admin = $this->adminAuthService->registerAdmin( $adminAuthRequest->validated() );
             $token = $admin->createToken( 'admin_token' )->plainTextToken;
 
             return response()->json( [
@@ -29,9 +29,41 @@ class AdminAuthController {
             ], Response::HTTP_CREATED );
         } catch ( ValidationException $e ) {
             throw $e;
-        } catch ( Throwable $e ) {
-            Log::error( 'Admin registration failed: ' . $e->getMessage() );
-            throw new HttpException( 500, 'Registration service unavailable' );
+        } catch ( Exception $e ) {
+            Log::error( 'Admin login error: ' . $e->getMessage() );
+            return response()->json( [
+                'success' => false,
+                'message' => 'Login failed'
+            ], 500 );
+        }
+    }
+
+    public function loginAdmin( AdminLoginRequest $adminLoginRequest ) {
+        try {
+            $token = $this->adminAuthService->loginAdmin(
+                $adminLoginRequest->input( 'email' ),
+                $adminLoginRequest->input( 'password' )
+            );
+
+            return response()->json( [
+                'success' => true,
+                'message' => 'Admin logged in successfully',
+                'token' => $token,
+            ], Response::HTTP_OK );
+        } catch ( ValidationException $e ) {
+            throw $e;
+        } catch ( AuthenticationException $e ) {
+            return response()->json( [
+                'success' => false,
+                'message' => 'Invalid credentials'
+            ], 401 );
+
+        } catch ( Exception $e ) {
+            Log::error( 'Admin login error: ' . $e->getMessage() );
+            return response()->json( [
+                'success' => false,
+                'message' => 'Login failed'
+            ], 500 );
         }
     }
 }

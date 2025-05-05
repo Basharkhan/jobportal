@@ -2,8 +2,9 @@
 namespace App\Repositories\Auth;
 
 use App\Models\User;
-use App\Repositories\Interfaces\AdminAuthRepositoryInterface;
+use App\Repositories\Interfaces\Auth\AdminAuthRepositoryInterface;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class AdminAuthRepository implements AdminAuthRepositoryInterface {
     public function register( array $data ): User {
@@ -18,4 +19,8 @@ class AdminAuthRepository implements AdminAuthRepositoryInterface {
     public function findByEmail( string $email ): ? User {
         return User::role("super_admin")->where( 'email', $email )->first();
     }    
+
+    public function validateCredentials( User $user, string $password ): bool {
+        return Hash::check($password, $user->password);
+    }
 }

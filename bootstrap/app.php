@@ -36,8 +36,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // Create middleware groups
         $middleware->group('admin', [
             'auth:sanctum',
-            'is_admin',
-            'throttle:api',
+            'is_admin',           
         ]);
 
         $middleware->group('employer', [
