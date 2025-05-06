@@ -12,7 +12,7 @@ class Location extends Model {
         'country',
     ];
 
-    public function employments(): HasMany {
-        return $this->hasMany( Employment::class );
+    public function jobPostings(): HasMany {
+        return $this->hasMany( JobPosting::class );
     }
 }

@@ -9,9 +9,22 @@ class CompanyProfile extends Model {
     protected $fillable = [
         'user_id',
         'company_name',
+        'logo',
         'website',
-        'industry',
-        'bio'
+        'email',
+        'phone',
+        'address',
+        'city',
+        'state',
+        'country',
+        'zip_code',
+        'founded_year',
+        'company_size',
+        'linkedin',
+        'business_description',
+        'industry_type',
+        'trade_license_number',
+        'is_verified',
     ];
 
     public function user(): BelongsTo {

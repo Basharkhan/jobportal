@@ -10,7 +10,7 @@ class Category extends Model {
         'name',
     ];
 
-    public function employments(): HasMany {
-        return $this->hasMany( Employment::class );
+    public function jobPostings(): HasMany {
+        return $this->hasMany( JobPosting::class );
     }
 }

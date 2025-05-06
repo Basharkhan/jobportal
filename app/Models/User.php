@@ -46,8 +46,8 @@ class User extends Authenticatable {
         return $this->hasOne( SeekerProfile::class );
     }
 
-    public function employments(): HasMany {
-        return $this->hasMany( Employment::class );
+    public function jobPostings(): HasMany {
+        return $this->hasMany( JobPosting::class );
     }
 
     public function applications(): HasMany {

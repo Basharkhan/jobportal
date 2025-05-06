@@ -15,9 +15,22 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('company_name');
+            $table->string('logo')->nullable();
             $table->string('website')->nullable();
-            $table->string('industry');
-            $table->text('bio')->nullable();
+            $table->string('email')->unique();
+            $table->string('phone')->unique();
+            $table->string('address')->nullable();
+            $table->string('city')->nullable();
+            $table->string('state')->nullable();
+            $table->string('country');
+            $table->string('zip_code')->nullable();
+            $table->string('founded_year');
+            $table->string('company_size')->nullable();
+            $table->string('linkedin')->nullable();
+            $table->text('business_description')->nullable();
+            $table->string('industry_type');
+            $table->string('trade_license_number');
+            $table->boolean('is_verified')->default(false);
             $table->timestamps();
         });
     }

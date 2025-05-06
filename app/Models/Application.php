@@ -7,15 +7,15 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Application extends Model {
     protected $fillable = [
-        'employment_id',
+        'job_posting_id',
         'user_id',
         'cover_letter',
         'resume',
         'status'
     ];
 
-    public function employment(): BelongsTo {
-        return $this->belongsTo( Employment::class );
+    public function jobPosting(): BelongsTo {
+        return $this->belongsTo( JobPosting::class );
     }
 
     public function seeker(): BelongsTo {
