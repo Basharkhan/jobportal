@@ -8,4 +8,6 @@ interface AdminAuthRepositoryInterface {
     public function findByEmail( string $email ): ? User;
 
     public function validateCredentials( User $user, string $password ): bool;
+
+    public function revokeAuthTokens( User $user, bool $revokeAll = false ): void;
 }

@@ -66,4 +66,40 @@ class AdminAuthController {
             ], 500 );
         }
     }
+
+    public function logoutAdmin() {
+        try {
+            $user = auth()->user();
+            $this->adminAuthService->logoutAdmin( $user );
+
+            return response()->json( [
+                'success' => true,
+                'message' => 'Admin logged out successfully'
+            ], Response::HTTP_OK );
+        } catch ( Exception $e ) {
+            Log::error( 'Admin logout error: ' . $e->getMessage() );
+            return response()->json( [
+                'success' => false,
+                'message' => 'Logout failed'
+            ], 500 );
+        }
+    }
+
+    public function forceLogoutAdmin() {
+        try {
+            $user = auth()->user();
+            $this->adminAuthService->logoutAdmin( $user, true );
+
+            return response()->json( [
+                'success' => true,
+                'message' => 'Admin logged out successfully from all devices'
+            ], Response::HTTP_OK );
+        } catch ( Exception $e ) {
+            Log::error( 'Admin logout error: ' . $e->getMessage() );
+            return response()->json( [
+                'success' => false,
+                'message' => 'Logout failed'
+            ], 500 );
+        }
+    }
 }

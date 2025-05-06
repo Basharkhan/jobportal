@@ -9,4 +9,6 @@ Route::prefix('admin')->group(function () {
 
 Route::prefix('admin')->middleware('admin')->group(function () {
     Route::post('/register', [AdminAuthController::class, 'registerAdmin']);        
+    Route::post('/logout', [AdminAuthController::class, 'logoutAdmin']);        
+    Route::post('/force-logout', [AdminAuthController::class, 'forceLogoutAdmin']);        
 });

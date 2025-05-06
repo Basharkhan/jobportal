@@ -34,8 +34,8 @@ class User extends Authenticatable {
         return $this->hasRole( 'job_seeker' );
     }
 
-    public function isAdmin(): bool {
-        return $this->hasRole( 'admin' );
+    public function isSuperAdmin(): bool {
+        return $this->hasRole( 'super_admin' );
     }
 
     public function companyProfile(): HasOne {

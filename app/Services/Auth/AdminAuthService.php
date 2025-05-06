@@ -44,4 +44,7 @@ class AdminAuthService {
         return $admin->createToken( 'admin-token' )->plainTextToken;
     }
 
+    public function logoutAdmin( User $user, bool $revokeAll = false ) {
+        $this->adminAuthRepository->revokeAuthTokens( $user, $revokeAll );
+    }
 }

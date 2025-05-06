@@ -23,4 +23,12 @@ class AdminAuthRepository implements AdminAuthRepositoryInterface {
     public function validateCredentials( User $user, string $password ): bool {
         return Hash::check($password, $user->password);
     }
+
+    public function revokeAuthTokens( User $user, bool $revokeAll = false ): void {
+        if ( $revokeAll ) {
+            $user->tokens()->delete();
+        } else {
+            $user->currentAccessToken()->delete();
+        }
+    }
 }
