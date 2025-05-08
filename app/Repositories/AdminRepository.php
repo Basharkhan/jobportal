@@ -1,12 +1,13 @@
 <?php
-namespace App\Repositories\Auth;
+namespace App\Repositories;
 
 use App\Models\User;
-use App\Repositories\Interfaces\Auth\AdminAuthRepositoryInterface;
+
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Repositories\Interfaces\AdminRepositoryInterface;
 
-class AdminAuthRepository implements AdminAuthRepositoryInterface {
+class AdminRepository implements AdminRepositoryInterface {
     public function register( array $data ): User {
         return DB::transaction( function () use ( $data ) {
             $admin = User::create($data);

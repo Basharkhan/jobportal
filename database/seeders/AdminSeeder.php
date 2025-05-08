@@ -15,7 +15,7 @@ class AdminSeeder extends Seeder {
     public function run(): void {
 
         User::createOrFirst( [
-            'name' => 'Super Admin',
+            'name' => 'Thor',
             'email' => 'admin@jobportal.com',
             'password' => bcrypt( '12345678' ),
             'email_verified_at' => now(),

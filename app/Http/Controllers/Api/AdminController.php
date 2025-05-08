@@ -1,18 +1,18 @@
 <?php
 
-namespace App\Http\Controllers\Api\Auth;
+namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Auth\AdminAuthRequest;
 use App\Http\Requests\Auth\AdminLoginRequest;
-use App\Services\Auth\AdminAuthService;
+use App\Services\AdminService;
 use Illuminate\Http\Response;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
-class AdminAuthController {
-    public function __construct( protected AdminAuthService $adminAuthService ) {
+class AdminController {
+    public function __construct( protected AdminService $adminAuthService ) {
 
     }
 

@@ -1,8 +1,8 @@
 <?php
-namespace App\Repositories\Interfaces\Auth;
+namespace App\Repositories\Interfaces;
 use App\Models\User;
 
-interface AdminAuthRepositoryInterface {
+interface AdminRepositoryInterface {
     public function register( array $data ): User;
 
     public function findByEmail( string $email ): ? User;
