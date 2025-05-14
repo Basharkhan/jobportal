@@ -52,8 +52,8 @@ class RolePermissionSeeder extends Seeder {
     }
 
     protected function createRoles() {
-        // Super Admin - has all permissions
-        $admin = Role::firstOrCreate( [ 'name' => 'super_admin' ] );
+        // Admin - has all permissions
+        $admin = Role::firstOrCreate( [ 'name' => 'admin' ] );
         $admin->givePermissionTo( Permission::all() );
 
         // Employer Role

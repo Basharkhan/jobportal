@@ -19,6 +19,6 @@ class AdminSeeder extends Seeder {
             'email' => 'admin@jobportal.com',
             'password' => bcrypt( '12345678' ),
             'email_verified_at' => now(),
-        ] )->assignRole( 'super_admin' );
+        ] )->assignRole( 'admin' );
     }
 }

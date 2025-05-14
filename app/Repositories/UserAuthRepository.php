@@ -9,7 +9,7 @@ class UserAuthRepository implements UserAuthRepositoryInterface {
     public function registerAdmin( array $data ): ?User {
         return DB::transaction( function () use ( $data ) {
             $admin = User::create($data);
-            $admin->assignRole('super_admin');
+            $admin->assignRole('admin');
 
             return $admin;
         } );
