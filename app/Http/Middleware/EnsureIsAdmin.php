@@ -14,10 +14,10 @@ class EnsureIsAdmin {
     */
 
     public function handle( Request $request, Closure $next ): Response {
-        if ( !$request->user()->hasRole( 'super_admin' ) ) {
+        if ( !$request->user()->hasRole( 'admin' ) ) {
             return response()->json( [
                 'message' => 'Unauthorized. Super admin access required.',
-                'errors' => [ 'role' => [ 'Only super admin can access this route' ] ]
+                'errors' => [ 'role' => [ 'Only admin can access this route' ] ]
             ], 403 );
         }
         return $next( $request );

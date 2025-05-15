@@ -12,12 +12,17 @@ Route::prefix('admin')->group(function () {
 
 Route::prefix('admin')->middleware('admin')->group(function () {
     Route::post('/register', [AdminController::class, 'registerAdmin']);        
-    Route::post('/logout', [AdminController::class, 'logoutAdmin']);        
-    Route::post('/force-logout', [AdminController::class, 'forceLogoutAdmin']);        
+    Route::post('/logout', [AdminController::class, 'logoutAdmin']);                
 });
 
-// employer routes
-Route::prefix('employer')->group(function () {
-    Route::post('/register', [EmployerController::class, 'registerEmployer']);
-    Route::post('/login', [EmployerController::class, 'loginEmployer']);
-});
+// // employer routes
+// Route::prefix('employer')->group(function () {
+//     Route::post('/register', [EmployerController::class, 'registerEmployer']);
+//     Route::post('/login', [EmployerController::class, 'loginEmployer']);
+// });
+
+// // user routes
+// Route::prefix('user')->group(function () {
+//     Route::post('/register', [EmployerController::class, 'registerEmployer']);
+//     Route::post('/login', [EmployerController::class, 'loginEmployer']);
+// });

@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Requests\Auth\AdminAuthRequest;
-use App\Http\Requests\Auth\AdminLoginRequest;
-use App\Services\AdminService;
+use App\Http\Requests\AdminRegistrationRequest;
+use App\Http\Requests\UserLoginReuqest;
+use App\Services\UserAuthService;
 use Illuminate\Http\Response;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
@@ -12,13 +12,13 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class AdminController {
-    public function __construct( protected AdminService $adminAuthService ) {
+    public function __construct( protected UserAuthService $userAuthService ) {
 
     }
 
-    public function registerAdmin( AdminAuthRequest $adminAuthRequest ) {
+    public function registerAdmin( AdminRegistrationRequest $adminRegistrationRequest ) {
         try {
-            $admin = $this->adminAuthService->registerAdmin( $adminAuthRequest->validated() );
+            $admin = $this->userAuthService->registerAdmin( $adminRegistrationRequest->validated() );
             $token = $admin->createToken( 'admin_token' )->plainTextToken;
 
             return response()->json( [
@@ -38,11 +38,12 @@ class AdminController {
         }
     }
 
-    public function loginAdmin( AdminLoginRequest $adminLoginRequest ) {
+    public function loginAdmin( UserLoginReuqest $userLoginReuqest ) {
         try {
-            $token = $this->adminAuthService->loginAdmin(
-                $adminLoginRequest->input( 'email' ),
-                $adminLoginRequest->input( 'password' )
+            $token = $this->userAuthService->login(
+                $userLoginReuqest->input( 'email' ),
+                $userLoginReuqest->input( 'password' ),
+                'admin'
             );
 
             return response()->json( [
@@ -70,7 +71,7 @@ class AdminController {
     public function logoutAdmin() {
         try {
             $user = auth()->user();
-            $this->adminAuthService->logoutAdmin( $user );
+            $this->userAuthService->logout( $user, true );
 
             return response()->json( [
                 'success' => true,
@@ -83,23 +84,5 @@ class AdminController {
                 'message' => 'Logout failed'
             ], 500 );
         }
-    }
-
-    public function forceLogoutAdmin() {
-        try {
-            $user = auth()->user();
-            $this->adminAuthService->logoutAdmin( $user, true );
-
-            return response()->json( [
-                'success' => true,
-                'message' => 'Admin logged out successfully from all devices'
-            ], Response::HTTP_OK );
-        } catch ( Exception $e ) {
-            Log::error( 'Admin logout error: ' . $e->getMessage() );
-            return response()->json( [
-                'success' => false,
-                'message' => 'Logout failed'
-            ], 500 );
-        }
-    }
+    }    
 }
