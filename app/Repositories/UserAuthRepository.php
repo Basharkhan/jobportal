@@ -40,7 +40,7 @@ class UserAuthRepository implements UserAuthRepositoryInterface {
             $user = User::create([
                 'name' => $data['name'],
                 'email' => $data['email'],
-                'password' => Hash::make($data['password']),
+                'password' => $data['password'],
             ]);
 
             $user->assignRole('employer');
@@ -62,6 +62,24 @@ class UserAuthRepository implements UserAuthRepositoryInterface {
                 'business_description' => $data['business_description'] ?? null,
                 'industry_type' => $data['industry_type'],
                 'trade_license_number' => $data['trade_license_number'],
+            ]);
+
+            return $user;
+        });
+    }
+
+    public function registerUser(array $data): ?User {
+        return DB::transaction(function () use ($data) {
+            $user = User::create([
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => $data['password'],
+            ]);
+
+            $user->assignRole('job_seeker');
+
+            $user->seekerProfile()->create([
+                'phone' => $data['phone'],                
             ]);
 
             return $user;

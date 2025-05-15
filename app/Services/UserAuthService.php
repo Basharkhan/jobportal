@@ -44,4 +44,8 @@ class UserAuthService {
     public function registerEmployer( array $data ) {
         return $this->userAuthRepository->registerEmployer( $data );
     }
+
+    public function registerUser( array $data ) {
+        return $this->userAuthRepository->registerUser( $data );
+    }
 }

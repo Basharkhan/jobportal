@@ -13,4 +13,6 @@ interface UserAuthRepositoryInterface {
     public function revokeAuthTokens( User $user, bool $revokeAll = false ): void;    
 
     public function registerEmployer( array $data ): ?User;
+
+    public function registerUser( array $data ): ?User;
 }
