@@ -10,5 +10,7 @@ interface UserAuthRepositoryInterface {
 
     public function validateCredentials( User $user, string $password ): bool;
 
-    public function revokeAuthTokens( User $user, bool $revokeAll = false ): void;
+    public function revokeAuthTokens( User $user, bool $revokeAll = false ): void;    
+
+    public function registerEmployer( array $data ): ?User;
 }

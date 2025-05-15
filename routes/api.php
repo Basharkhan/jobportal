@@ -15,11 +15,12 @@ Route::prefix('admin')->middleware('admin')->group(function () {
     Route::post('/logout', [AdminController::class, 'logoutAdmin']);                
 });
 
-// // employer routes
-// Route::prefix('employer')->group(function () {
-//     Route::post('/register', [EmployerController::class, 'registerEmployer']);
-//     Route::post('/login', [EmployerController::class, 'loginEmployer']);
-// });
+// employer routes
+Route::prefix('employer')->group(function () {
+    Route::post('/register', [EmployerController::class, 'registerEmployer']);
+    Route::post('/login', [EmployerController::class, 'loginEmployer']);
+    Route::post('/logout', [EmployerController::class, 'logoutEmployer']);
+});
 
 // // user routes
 // Route::prefix('user')->group(function () {

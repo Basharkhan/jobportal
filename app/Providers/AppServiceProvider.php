@@ -6,6 +6,8 @@ use App\Repositories\AdminRepository;
 use App\Repositories\Interfaces\AdminRepositoryInterface;
 use App\Repositories\Interfaces\EmployerRepository;
 use App\Repositories\Interfaces\EmployerRepositoryInterface;
+use App\Repositories\Interfaces\UserAuthRepositoryInterface;
+use App\Repositories\UserAuthRepository;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider {
@@ -14,8 +16,7 @@ class AppServiceProvider extends ServiceProvider {
     */
 
     public function register(): void {
-        $this->app->bind( AdminRepositoryInterface::class, AdminRepository::class );
-        $this->app->bind( EmployerRepositoryInterface::class, EmployerRepository::class );
+        $this->app->bind( UserAuthRepositoryInterface::class, UserAuthRepository::class );        
     }
 
     /**

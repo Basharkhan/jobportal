@@ -40,4 +40,8 @@ class UserAuthService {
     public function logout( User $user, bool $revokeAll = false ) {
         $this->userAuthRepository->revokeAuthTokens( $user, $revokeAll );
     }
+
+    public function registerEmployer( array $data ) {
+        return $this->userAuthRepository->registerEmployer( $data );
+    }
 }
