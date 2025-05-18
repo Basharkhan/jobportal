@@ -4,6 +4,7 @@ namespace App\Repositories;
 use App\Models\JobPosting;
 use App\Models\User;
 use App\Repositories\Interfaces\EmployerRepositoryInterface;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -30,7 +31,14 @@ class EmployerRepository implements EmployerRepositoryInterface {
             ]);
 
             return $job;
-        });
-        
+        });        
+    }
+
+    public function getJobsByEmployerId(int $employerId): Collection {
+        return JobPosting::where('user_id', $employerId)->get();
+    }
+
+    public function findJobById(int $jobId): ?JobPosting{
+        return JobPosting::find($jobId);
     }
 }

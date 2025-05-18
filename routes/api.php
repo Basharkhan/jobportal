@@ -26,7 +26,18 @@ Route::prefix('employer')->group(function () {
     // 👇 Secure logout with middleware group
     Route::middleware('employer')->group(function () {
         Route::post('/logout', [EmployerController::class, 'logoutEmployer']);
+        
+        // job posting routes
+         Route::prefix('jobs')->group(function () {
+            Route::post('/', [EmployerController::class, 'createJob']); 
+            Route::get('/{id}', [EmployerController::class, 'getJobsByEmployerId']);  
+            Route::get('/{id}', [EmployerController::class, 'findJobById']);
+            // Route::put('/{id}', [EmployerController::class, 'update']); // Update job
+            // Route::delete('/{id}', [EmployerController::class, 'destroy']); // Delete job
+        });
     });
+
+
 });
 
 
