@@ -16,8 +16,18 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id')->constrained()->onDelete('cascade');
             $table->string('resume_path')->nullable();
             $table->text('skills')->nullable();
-            $table->text('experience')->nullable();
-            $table->text('education')->nullable();
+            $table->text('bio')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('location')->nullable();
+            $table->string('desired_job_title')->nullable();
+            $table->decimal('expected_salary', 10, 2)->nullable();
+            $table->string('employment_type')->nullable();
+            $table->date('available_from')->nullable();
+            $table->string('portfolio_link')->nullable();
+            $table->string('linkedin')->nullable();
+            $table->string('github')->nullable();
+            $table->text('certifications')->nullable();
+            $table->text('languages')->nullable();
             $table->timestamps();
         });
 

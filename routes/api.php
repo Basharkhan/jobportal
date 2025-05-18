@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\EmployerController;
-use App\Http\Controllers\Api\UserAuthController;
+use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -32,6 +32,10 @@ Route::prefix('employer')->group(function () {
 
 // user routes
 Route::prefix('user')->group(function () {
-    Route::post('/register', [UserAuthController::class, 'registerUser']);
-    // Route::post('/login', [EmployerController::class, 'loginEmployer']);
+    Route::post('/register', [UserController::class, 'registerUser']);
+    Route::post('/login', [UserController::class, 'loginUser']);
+
+    Route::middleware('job_seeker')->group(function () {
+        Route::post('/logout', [UserController::class, 'logoutUser']);
+    });
 });

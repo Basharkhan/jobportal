@@ -1,50 +1,36 @@
 <?php
 namespace App\Repositories;
 
+use App\Models\JobPosting;
 use App\Models\User;
 use App\Repositories\Interfaces\EmployerRepositoryInterface;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class EmployerRepository implements EmployerRepositoryInterface {
-    // public function register(array $data) {
-    //     return DB::transaction(function () use ($data) {
-    //         $user = User::create([
-    //             'name' => $data['name'],
-    //             'email' => $data['email'],
-    //             'password' => Hash::make($data['password']),
-    //         ]);
+    public function createJob(array $data): ?JobPosting {
+        return DB::transaction(function () use ($data) {
+            $job = JobPosting::create([
+                'user_id' => $data['user_id'],
+                'title' => $data['title'],
+                'description' => $data['description'],
+                'category_id' => $data['category_id'] ?? null,
+                'location_id' => $data['location_id'] ?? null,
+                'job_type' => $data['job_type'],
+                'salary_min' => $data['salary_min'] ?? null,
+                'salary_max' => $data['salary_max'] ?? null,
+                'salary_currency' => $data['salary_currency'] ?? 'USD',
+                'experience_level' => $data['experience_level'],
+                'education_level' => $data['education_level'],
+                'application_deadline' => $data['application_deadline'],
+                'remote' => $data['remote'] ?? false,
+                'benefits' => $data['benefits'] ?? null,
+                'requirements' => $data['requirements'] ?? null,
+                'responsibilities' => $data['responsibilities'] ?? null,
+            ]);
 
-    //         $user->assignRole('employer');
-
-    //         $user->companyProfile()->create([
-    //             'company_name' => $data['company_name'],
-    //             'logo' => $data['logo'] ?? null,
-    //             'website' => $data['website'] ?? null,
-    //             'email' => $data['email'],
-    //             'phone' => $data['phone'],
-    //             'address' => $data['address'] ?? null,
-    //             'city' => $data['city'] ?? null,
-    //             'state' => $data['state'] ?? null,
-    //             'country' => $data['country'],
-    //             'zip_code' => $data['zip_code'] ?? null,
-    //             'founded_year' => $data['founded_year'],
-    //             'company_size' => $data['company_size'] ?? null,
-    //             'linkedin' => $data['linkedin'] ?? null,
-    //             'business_description' => $data['business_description'] ?? null,
-    //             'industry_type' => $data['industry_type'],
-    //             'trade_license_number' => $data['trade_license_number'],
-    //         ]);
-
-    //         return $user;
-    //     });
-    // }
-
-    // public function validateCredentials(User $user, string $password): bool {
-    //     return Hash::check($password, $user->password);
-    // }
-
-    // public function findByEmail(string $email): ?User{
-    //     return User::where('email', $email)->first();
-    // }
+            return $job;
+        });
+        
+    }
 }
