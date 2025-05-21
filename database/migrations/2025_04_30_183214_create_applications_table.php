@@ -16,6 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->foreignId('job_posting_id')->constrained()->onDelete('cascade');
             $table->text('cover_letter')->nullable();
+            $table->string('resume')->nullable();
             $table->string('status')->default('pending');
             $table->timestamps();
         });

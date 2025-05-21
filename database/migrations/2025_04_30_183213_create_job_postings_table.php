@@ -29,7 +29,7 @@ return new class extends Migration
             $table->text('benefits')->nullable(); 
             $table->text('requirements')->nullable(); 
             $table->text('responsibilities')->nullable(); 
-            $table->string('status')->default('active'); 
+            $table->enum('status', ['draft', 'published', 'closed'])->default('draft');
             $table->timestamp('published_at')->nullable(); 
             $table->timestamp('expires_at')->nullable(); 
             $table->timestamps();

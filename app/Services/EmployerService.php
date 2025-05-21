@@ -12,30 +12,30 @@ class EmployerService {
 
     }
 
-    public function createJob( array $data ): ?JobPosting {
-        $data['user_id'] = auth()->user()->id;
-        return $this->employerRepository->createJob( $data );
-    }
+    // public function createJob( array $data ): ?JobPosting {
+    //     $data['user_id'] = auth()->user()->id;
+    //     return $this->employerRepository->createJob( $data );
+    // }
 
-    public function getJobsByEmployerId( int $employerId ) {
-        if ( auth()->user()->id !== $employerId ) {
-            throw new UnauthorizedHttpException( 'Unauthorized' );
-        }
+    // public function getJobsByEmployerId( int $employerId ) {
+    //     if ( auth()->user()->id !== $employerId ) {
+    //         throw new UnauthorizedHttpException( 'Unauthorized' );
+    //     }
 
-        return $this->employerRepository->getJobsByEmployerId( $employerId );
-    }
+    //     return $this->employerRepository->getJobsByEmployerId( $employerId );
+    // }
 
-    public function findJobById( int $jobId ) {
-        $job = $this->employerRepository->findJobById( $jobId );
+    // public function findJobById( int $jobId ) {
+    //     $job = $this->employerRepository->findJobById( $jobId );
 
-        if ( !$job ) {
-            throw new NotFoundHttpException( 'Job not found' );
-        }
+    //     if ( !$job ) {
+    //         throw new NotFoundHttpException( 'Job not found' );
+    //     }
 
-        if ( auth()->user()->id !== $job->user_id ) {
-            throw new UnauthorizedHttpException( 'Unauthorized' );
-        }
+    //     if ( auth()->user()->id !== $job->user_id ) {
+    //         throw new UnauthorizedHttpException( 'Unauthorized' );
+    //     }
 
-        return $job;
-    }
+    //     return $job;
+    // }
 }

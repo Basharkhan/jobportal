@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Api\AdminController;
+use App\Http\Controllers\Api\ApplicationController;
 use App\Http\Controllers\Api\EmployerController;
+use App\Http\Controllers\Api\JobPostingController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,21 +27,24 @@ Route::prefix('employer')->group(function () {
 
     // 👇 Secure logout with middleware group
     Route::middleware('employer')->group(function () {
-        Route::post('/logout', [EmployerController::class, 'logoutEmployer']);
-        
-        // job posting routes
-         Route::prefix('jobs')->group(function () {
-            Route::post('/', [EmployerController::class, 'createJob']); 
-            Route::get('/{id}', [EmployerController::class, 'getJobsByEmployerId']);  
-            Route::get('/{id}', [EmployerController::class, 'findJobById']);
-            // Route::put('/{id}', [EmployerController::class, 'update']); // Update job
-            // Route::delete('/{id}', [EmployerController::class, 'destroy']); // Delete job
-        });
+        Route::post('/logout', [EmployerController::class, 'logoutEmployer']);            
     });
 
 
 });
 
+// job posting routes
+Route::middleware('employer')->group(function () {        
+    // job posting routes
+    Route::prefix('jobs')->group(function () {
+        Route::post('/', [JobPostingController::class, 'store']); 
+        Route::get('/', [JobPostingController::class, 'index']);  
+        Route::get('/search', [JobPostingController::class, 'search']); 
+        Route::get('/{id}', [JobPostingController::class, 'show']);   
+        Route::put('/{id}', [JobPostingController::class, 'update']);
+        Route::delete('/{id}', [JobPostingController::class, 'destroy']);              
+    });
+});
 
 // user routes
 Route::prefix('user')->group(function () {
@@ -48,5 +53,14 @@ Route::prefix('user')->group(function () {
 
     Route::middleware('job_seeker')->group(function () {
         Route::post('/logout', [UserController::class, 'logoutUser']);
+    });
+});
+
+// application routes
+Route::middleware('job_seeker')->group(function () {            
+    Route::prefix('application')->group(function () {
+        Route::post('/', [ApplicationController::class, 'store']);   
+        Route::get('/', [ApplicationController::class, 'index']);        
+        Route::get('/{id}', [ApplicationController::class, 'findApplication']);    
     });
 });
