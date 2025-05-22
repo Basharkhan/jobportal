@@ -3,9 +3,10 @@ namespace App\Services;
 
 use App\Models\Application;
 use App\Repositories\ApplicationRepository;
-use Symfony\Component\Finder\Exception\AccessDeniedException;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
+use function PHPUnit\Framework\isEmpty;
 
 class ApplicationService {
     public function __construct(protected ApplicationRepository $applicationRepository) {
@@ -20,23 +21,89 @@ class ApplicationService {
         return $this->applicationRepository->getApplicationsByUser($userId, $perPage);
     }
 
+
     public function findApplication(int $applicationId): ?Application {
         $application =  $this->applicationRepository->findApplication($applicationId);
         
         if (!$application) {
             throw new NotFoundHttpException('Application not found');
-        }
-        
-        $user = auth()->user();
-
-        if($user->isJobSeeker() && $user->id !== $application->user_id) {
-            throw new AccessDeniedHttpException('You are not authorized to access this application');
-        }
-
-        if($user->isEmployer() && $user->id !== $application->jobPosting->user_id) {
-            throw new AccessDeniedHttpException('You are not authorized to access this application');
-        }
+        }        
 
         return $application;
+    }    
+
+    public function findApplicationForAdmin(int $applicationId): ?Application {        
+        $user = auth()->user();
+
+        if(!$user->isAdmin()) {
+            throw new AccessDeniedHttpException('You are not authorized to access this application');
+        }
+
+        $application =  $this->findApplication($applicationId); 
+        return $application;
+    }
+
+     public function findApplicationForEmployer(int $applicationId): ?Application {
+        $user = auth()->user();
+
+        if(!$user->isEmployer()) {
+            throw new AccessDeniedHttpException('You are not authorized to access this application');
+        }
+
+        $application =  $this->findApplication($applicationId);          
+        return $application;
+    }
+
+    public function findApplicationForJobSeeker(int $applicationId): ?Application {
+        $user = auth()->user();
+
+        if(!$user->isJobSeeker() ) {
+            throw new AccessDeniedHttpException('You are not authorized to access this application');
+        }
+
+        $application =  $this->findApplication($applicationId);          
+        return $application;
+    }    
+
+    public function getApplicationsByJobForAdmin(int $jobId, int $perPage=10) {
+        $user = auth()->user();
+
+        if(!$user->isAdmin()) {
+            throw new AccessDeniedHttpException('You are not authorized to access this application');
+        }
+        
+        $applications = $this->applicationRepository->getApplicationsByJob($jobId, $perPage);
+        
+        if ($applications->total() == 0) {
+            throw new NotFoundHttpException('Applications not found');
+        }
+        
+        return $applications;
+    }
+
+    public function getApplicationsByJobForEmployer(int $jobId, int $perPage=10) {
+        $user = auth()->user();
+
+        if(!$user->isEmployer()) {
+            throw new AccessDeniedHttpException('You are not authorized to access this application');
+        }
+        
+        $applications = $this->applicationRepository->getApplicationsByJob($jobId, $perPage);
+
+        if ($applications->total() == 0) {
+            throw new NotFoundHttpException('Applications not found');
+        }
+
+        return $applications;
+    }
+
+    public function deleteApplication(int $applicationId): bool {
+        $user = auth()->user();
+
+        if(!$user->isAdmin()) {
+            throw new AccessDeniedHttpException('You are not authorized to access this application');
+        }
+
+        return $this->applicationRepository->deleteApplication($applicationId);
     }
 }

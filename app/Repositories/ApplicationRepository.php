@@ -29,4 +29,19 @@ class ApplicationRepository implements ApplicationRepositoryInterface {
             ->where('id', $applicationId)
             ->first();
     }
+
+    public function getApplicationsByJob(int $jobId, int $perPage=10): LengthAwarePaginator {
+        return Application::where('job_posting_id', $jobId)
+            ->with(['jobPosting', 'seeker'])
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
+    }
+
+    public function deleteApplication(int $applicationId): bool {
+        $application = $this->findApplication($applicationId);
+        if ($application) {
+            return $application->delete();
+        }
+        return false;
+    }
 }

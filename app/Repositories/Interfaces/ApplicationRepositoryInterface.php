@@ -10,10 +10,9 @@ interface ApplicationRepositoryInterface {
 
     public function findApplication(int $applicationId): ?Application;
     
-    // public function getApplicationsByJob(int $jobId): LengthAwarePaginator;
+    public function getApplicationsByJob(int $jobId, int $perPage=10): LengthAwarePaginator;
     
-
     // public function updateStatus(int $applicationId, string $status): bool;
 
-    // public function deleteApplication(int $applicationId): bool;
+    public function deleteApplication(int $applicationId): bool;
 }

@@ -16,6 +16,9 @@ Route::prefix('admin')->group(function () {
     Route::middleware('admin')->group(function () {
         Route::post('/register', [AdminController::class, 'registerAdmin']);
         Route::post('/logout', [AdminController::class, 'logoutAdmin']);
+        Route::get('/application/{id}', [ApplicationController::class, 'findApplicationForAdmin']);  
+        Route::get('/applications/by-job/{id}', [ApplicationController::class, 'getApplicationsByJobForAdmin']);    
+        Route::delete('/application/{id}', [ApplicationController::class, 'deleteApplication']);
     });
 });
 
@@ -27,7 +30,9 @@ Route::prefix('employer')->group(function () {
 
     // 👇 Secure logout with middleware group
     Route::middleware('employer')->group(function () {
-        Route::post('/logout', [EmployerController::class, 'logoutEmployer']);            
+        Route::post('/logout', [EmployerController::class, 'logoutEmployer']);    
+        Route::get('/application/{id}', [ApplicationController::class, 'findApplicationForEmployer']);     
+        Route::get('/applications/by-job/{id}', [ApplicationController::class, 'getApplicationsByJobForEmployer']);    
     });
 
 
@@ -60,7 +65,7 @@ Route::prefix('user')->group(function () {
 Route::middleware('job_seeker')->group(function () {            
     Route::prefix('application')->group(function () {
         Route::post('/', [ApplicationController::class, 'store']);   
-        Route::get('/', [ApplicationController::class, 'index']);        
-        Route::get('/{id}', [ApplicationController::class, 'findApplication']);    
+        Route::get('/', [ApplicationController::class, 'index']);    
+        Route::get('/application/{id}', [ApplicationController::class, 'findApplicationForJobSeeker']);               
     });
 });
