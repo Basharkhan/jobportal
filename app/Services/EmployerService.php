@@ -4,6 +4,7 @@ namespace App\Services;
 use App\Models\JobPosting;
 use App\Repositories\EmployerRepository;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
@@ -12,30 +13,14 @@ class EmployerService {
 
     }
 
-    // public function createJob( array $data ): ?JobPosting {
-    //     $data['user_id'] = auth()->user()->id;
-    //     return $this->employerRepository->createJob( $data );
-    // }
+    public function getAllEmployers(int $perPage = 10): LengthAwarePaginator {
+        $user = auth()->user();
 
-    // public function getJobsByEmployerId( int $employerId ) {
-    //     if ( auth()->user()->id !== $employerId ) {
-    //         throw new UnauthorizedHttpException( 'Unauthorized' );
-    //     }
+        if(!$user->isAdmin()) {
+            throw new UnauthorizedHttpException('Unauthorized! You do not have permission to view this resource.');
+        }
 
-    //     return $this->employerRepository->getJobsByEmployerId( $employerId );
-    // }
-
-    // public function findJobById( int $jobId ) {
-    //     $job = $this->employerRepository->findJobById( $jobId );
-
-    //     if ( !$job ) {
-    //         throw new NotFoundHttpException( 'Job not found' );
-    //     }
-
-    //     if ( auth()->user()->id !== $job->user_id ) {
-    //         throw new UnauthorizedHttpException( 'Unauthorized' );
-    //     }
-
-    //     return $job;
-    // }
+        $employers = $this->employerRepository->getAll($perPage);
+        return $employers;
+    }
 }

@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Exception;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class JobPostingController
 {
@@ -48,6 +49,28 @@ class JobPostingController
             ], Response::HTTP_OK );
         } catch ( Exception $e ) {
             Log::error( 'Get jobs error: ' . $e->getMessage() );
+            return response()->json( [
+                'success' => false,
+                'message' => 'Failed to retrieve jobs'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR );
+        }
+    }
+
+    public function allJobs(Request $request) {
+        try {
+            $perPage = $request->query('per_page', 10);
+            $jobs = $this->jobPostingService->getAllJobs( (int) $perPage );
+            return response()->json( [
+                'success' => true,
+                'data' => $jobs,
+            ], Response::HTTP_OK );
+        } catch(UnauthorizedHttpException $e) {
+            return response()->json( [
+                'success' => false,
+                'message' => 'Unauthorized! You are not allowed to access this api'
+            ], Response::HTTP_UNAUTHORIZED );
+        } catch ( Exception $e ) {
+            Log::error( 'Get all jobs error: ' . $e->getMessage() );
             return response()->json( [
                 'success' => false,
                 'message' => 'Failed to retrieve jobs'
@@ -95,13 +118,19 @@ class JobPostingController
         }
     }
 
-    public function destroy( int $jobId ) {
+    public function deleteJob( int $jobId ) {
         try {
             $this->jobPostingService->deleteJob( $jobId );
+
             return response()->json( [
                 'success' => true,
                 'message' => 'Job deleted successfully',
             ], Response::HTTP_OK );
+        } catch(UnauthorizedHttpException $e) {
+            return response()->json( [
+                'success' => false,
+                'message' => 'Unauthorized! You are not allowed to access this api'
+            ], Response::HTTP_UNAUTHORIZED );
         } catch (NotFoundHttpException $e) {
             return response()->json( [
                 'success' => false,

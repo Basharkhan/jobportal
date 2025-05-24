@@ -2,9 +2,7 @@
 
 namespace App\Providers;
 
-use App\Repositories\AdminRepository;
-use App\Repositories\Interfaces\AdminRepositoryInterface;
-use App\Repositories\Interfaces\EmployerRepository;
+use App\Repositories\EmployerRepository;
 use App\Repositories\Interfaces\EmployerRepositoryInterface;
 use App\Repositories\Interfaces\JobPostingRepositoryInterface;
 use App\Repositories\Interfaces\UserAuthRepositoryInterface;
@@ -19,7 +17,8 @@ class AppServiceProvider extends ServiceProvider {
 
     public function register(): void {
         $this->app->bind( UserAuthRepositoryInterface::class, UserAuthRepository::class );        
-        $this->app->bind( JobPostingRepositoryInterface::class, JobPostingRepository::class );   
+        $this->app->bind( JobPostingRepositoryInterface::class, JobPostingRepository::class );           
+        $this->app->bind( EmployerRepositoryInterface::class, EmployerRepository::class );   
     }
 
     /**

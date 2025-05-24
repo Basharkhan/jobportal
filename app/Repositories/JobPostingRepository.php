@@ -37,6 +37,10 @@ class JobPostingRepository implements JobPostingRepositoryInterface {
             ->paginate($perPage);
     }
 
+    public function getAllJobs(int $perPage=10): LengthAwarePaginator {
+        return JobPosting::latest()->paginate($perPage);
+    }
+
     public function findJobById(int $jobId): ?JobPosting{
         return JobPosting::find($jobId);
     }

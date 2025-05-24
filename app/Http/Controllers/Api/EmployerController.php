@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\EmployerRegisterRequest;
-use App\Http\Requests\JobRequest;
 use App\Http\Requests\UserLoginReuqest;
 use App\Services\EmployerService;
 use App\Services\UserAuthService;
@@ -11,10 +10,12 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Exception;
 use Illuminate\Auth\AuthenticationException;
+use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
 class EmployerController {
-    public function __construct( protected UserAuthService $userAuthService ) {        
+    public function __construct( protected UserAuthService $userAuthService, protected EmployerService $employerService ) {        
 
     }
 
@@ -87,4 +88,27 @@ class EmployerController {
             ], 500 );
         }
     }     
+
+    public function getAllEmployers( Request $request ) {        
+        try {
+            $perPage = $request->input( 'per_page', 10 );
+            $employers = $this->employerService->getAllEmployers( $perPage );
+
+            return response()->json( [
+                'success' => true,
+                'data' => $employers,
+            ], Response::HTTP_OK );
+        } catch(UnauthorizedHttpException $e) {
+            return response()->json( [
+                'success' => false,
+                'message' => $e->getMessage()
+            ], Response::HTTP_UNAUTHORIZED );
+        } catch ( Exception $e ) {
+            Log::error( 'Get all employers error: ' . $e->getMessage() );
+            return response()->json( [
+                'success' => false,
+                'message' => 'Failed to retrieve employers'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR );
+        }
+    }
 }

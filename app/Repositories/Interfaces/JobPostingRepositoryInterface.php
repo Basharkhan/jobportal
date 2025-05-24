@@ -8,6 +8,8 @@ interface JobPostingRepositoryInterface {
 
     public function getJobsByEmployerId(int $employerId, int $perPage): LengthAwarePaginator;
 
+    public function getAllJobs(int $perPage=10): LengthAwarePaginator;
+
     public function findJobById(int $jobId): ?JobPosting;
 
     public function updateJob(int $jobId, array $data): ?JobPosting;

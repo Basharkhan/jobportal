@@ -6,6 +6,8 @@ use App\Repositories\EmployerRepository;
 use App\Repositories\JobPostingRepository;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
@@ -25,6 +27,16 @@ class JobPostingService {
         }
 
         return $this->jobPostingRepository->getJobsByEmployerId( $employerId, $perPage );
+    }
+
+    public function getAllJobs( int $perPage = 10 ): LengthAwarePaginator {
+        $user = auth()->user();
+
+        if(!$user->isAdmin()) {
+            throw new UnauthorizedHttpException( 'Unauthorized! You are not allowed to access this api' );
+        }
+
+        return $this->jobPostingRepository->getAllJobs( $perPage );           
     }
 
     public function findJobById( int $jobId ) {
@@ -52,13 +64,19 @@ class JobPostingService {
     }
 
     public function deleteJob( int $jobId ): bool {
+        $user = auth()->user();      
+
+        // if ( !$user->isAdmin() ) {
+        //     throw new UnauthorizedHttpException( 'Unauthorized! You are not allowed to access this api' );           
+        // } 
+
         $job = $this->findJobById( $jobId );
 
         if ( !$job ) {
             throw new NotFoundHttpException( 'Job not found' );
         }
 
-        return $this->jobPostingRepository->deleteJob( $jobId );
+        return $this->jobPostingRepository->deleteJob( $jobId );         
     }
 
     public function changeJobStatus( int $jobId, string $status ): bool {

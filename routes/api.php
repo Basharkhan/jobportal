@@ -8,6 +8,14 @@ use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 
+Route::middleware('admin')->get('/admin/test', function () {
+    return response()->json([
+        'user' => auth()->user()->email,
+        'roles' => auth()->user()->getRoleNames(),
+    ]);
+});
+
+
 // admin routes
 Route::prefix('admin')->group(function () {
     Route::post('/login', [AdminController::class, 'loginAdmin']);
@@ -18,7 +26,10 @@ Route::prefix('admin')->group(function () {
         Route::post('/logout', [AdminController::class, 'logoutAdmin']);
         Route::get('/application/{id}', [ApplicationController::class, 'findApplicationForAdmin']);  
         Route::get('/applications/by-job/{id}', [ApplicationController::class, 'getApplicationsByJobForAdmin']);    
-        Route::delete('/application/{id}', [ApplicationController::class, 'deleteApplication']);
+        Route::delete('/application/{id}', [ApplicationController::class, 'deleteApplication']);        
+        Route::delete('/jobs/{id}', [JobPostingController::class, 'deleteJob']);   
+        Route::get('/jobs', [JobPostingController::class, 'allJobs']);
+        Route::get('/employers', [EmployerController::class, 'getAllEmployers']);        
     });
 });
 
@@ -46,8 +57,7 @@ Route::middleware('employer')->group(function () {
         Route::get('/', [JobPostingController::class, 'index']);  
         Route::get('/search', [JobPostingController::class, 'search']); 
         Route::get('/{id}', [JobPostingController::class, 'show']);   
-        Route::put('/{id}', [JobPostingController::class, 'update']);
-        Route::delete('/{id}', [JobPostingController::class, 'destroy']);              
+        Route::put('/{id}', [JobPostingController::class, 'update']);                   
     });
 });
 
