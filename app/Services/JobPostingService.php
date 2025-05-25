@@ -2,12 +2,8 @@
 namespace App\Services;
 
 use App\Models\JobPosting;
-use App\Repositories\EmployerRepository;
 use App\Repositories\JobPostingRepository;
-use Illuminate\Auth\AuthenticationException;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 

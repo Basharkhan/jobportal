@@ -22,6 +22,7 @@ class JobPostingController
     public function store(JobRequest $jobRequest) {
         try {
             $job = $this->jobPostingService->createJob( $jobRequest->validated() );
+            
             return response()->json( [
                 'success' => true,
                 'message' => 'Job created successfully',

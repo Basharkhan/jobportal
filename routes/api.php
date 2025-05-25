@@ -4,34 +4,35 @@ use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\ApplicationController;
 use App\Http\Controllers\Api\EmployerController;
 use App\Http\Controllers\Api\JobPostingController;
+use App\Http\Controllers\Api\UserAuthController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
 // admin routes
 Route::prefix('admin')->group(function () {
-    Route::post('/login', [AdminController::class, 'loginAdmin']);
+    Route::post('/login', [UserAuthController::class, 'loginAdmin']);
 
     // 👇 Secure with admin group
     Route::middleware('admin')->group(function () {
-        Route::post('/register', [AdminController::class, 'registerAdmin']);
-        Route::post('/logout', [AdminController::class, 'logoutAdmin']);
+        Route::post('/register', [UserAuthController::class, 'registerAdmin']);
+        Route::post('/logout', [UserAuthController::class, 'logoutAdmin']);
         Route::get('/application/{id}', [ApplicationController::class, 'findApplicationForAdmin']);  
         Route::get('/applications/by-job/{id}', [ApplicationController::class, 'getApplicationsByJobForAdmin']);    
         Route::delete('/application/{id}', [ApplicationController::class, 'deleteApplication']);        
         Route::delete('/jobs/{id}', [JobPostingController::class, 'deleteJob']);   
         Route::get('/jobs', [JobPostingController::class, 'allJobs']);        
-        Route::get('/employers', [EmployerController::class, 'getAllEmployers']);        
+        // Route::get('/employers', [EmployerController::class, 'getAllEmployers']);        
     });
 });
 
 // employer routes
 Route::prefix('employer')->group(function () {
-    Route::post('/register', [EmployerController::class, 'registerEmployer']);
-    Route::post('/login', [EmployerController::class, 'loginEmployer']);
+    Route::post('/register', [UserAuthController::class, 'registerEmployer']);
+    Route::post('/login', [UserAuthController::class, 'loginEmployer']);
 
     // 👇 Secure logout with middleware group
     Route::middleware('employer')->group(function () {
-        Route::post('/logout', [EmployerController::class, 'logoutEmployer']);    
+        Route::post('/logout', [UserAuthController::class, 'logoutEmployer']);    
         Route::get('/application/{id}', [ApplicationController::class, 'findApplicationForEmployer']);     
         Route::get('/applications/by-job/{id}', [ApplicationController::class, 'getApplicationsByJobForEmployer']);    
 
@@ -53,13 +54,13 @@ Route::middleware(['auth:sanctum', 'role:admin|employer'])->group(function () {
 // user routes
 Route::prefix('user')->group(function () {
     // Public routes (no auth)
-    Route::post('/register', [UserController::class, 'registerUser']);
-    Route::post('/login', [UserController::class, 'loginUser']);
+    Route::post('/register', [UserAuthController::class, 'registerUser']);
+    Route::post('/login', [UserAuthController::class, 'loginUser']);
 
     // Protected routes (require job_seeker role)
     Route::middleware('job_seeker')->group(function () {
         // Auth routes
-        Route::post('/logout', [UserController::class, 'logoutUser']);
+        Route::post('/logout', [UserAuthController::class, 'logoutUser']);
 
         // Application routes
         Route::prefix('applications')->group(function () {
