@@ -34,7 +34,7 @@ class AdminController {
             return response()->json( [
                 'success' => false,
                 'message' => 'Login failed'
-            ], 500 );
+            ], Response::HTTP_INTERNAL_SERVER_ERROR );
         }
     }
 
@@ -57,14 +57,13 @@ class AdminController {
             return response()->json( [
                 'success' => false,
                 'message' => 'Invalid credentials'
-            ], 401 );
-
+            ], Response::HTTP_UNAUTHORIZED );
         } catch ( Exception $e ) {
             Log::error( 'Admin login error: ' . $e->getMessage() );
             return response()->json( [
                 'success' => false,
                 'message' => 'Login failed'
-            ], 500 );
+            ], Response::HTTP_INTERNAL_SERVER_ERROR );
         }
     }
 
@@ -82,7 +81,7 @@ class AdminController {
             return response()->json( [
                 'success' => false,
                 'message' => 'Logout failed'
-            ], 500 );
+            ], Response::HTTP_INTERNAL_SERVER_ERROR );
         }
     }    
 }

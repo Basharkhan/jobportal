@@ -29,7 +29,8 @@ return new class extends Migration
             $table->text('benefits')->nullable(); 
             $table->text('requirements')->nullable(); 
             $table->text('responsibilities')->nullable(); 
-            $table->enum('status', ['draft', 'published', 'closed'])->default('draft');
+            $table->enum('approval_status', ['pending', 'approved', 'rejected'])->default('pending');
+            $table->enum('job_status', ['draft', 'published', 'closed'])->default('draft');
             $table->timestamp('published_at')->nullable(); 
             $table->timestamp('expires_at')->nullable(); 
             $table->timestamps();

@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('github')->nullable();
             $table->text('certifications')->nullable();
             $table->text('languages')->nullable();
+            $table->boolean('status')->default(true);
             $table->timestamps();
         });
 

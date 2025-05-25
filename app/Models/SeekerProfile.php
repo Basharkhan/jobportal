@@ -22,6 +22,7 @@ class SeekerProfile extends Model {
         'github',
         'certifications',
         'languages',
+        'status'
     ];
 
     public function user(): BelongsTo {

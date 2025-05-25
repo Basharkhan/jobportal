@@ -23,7 +23,7 @@ class JobPostingService {
 
     public function getJobsByEmployerId( int $employerId, int  $perPage) {
         if ( auth()->user()->id !== $employerId ) {
-            throw new UnauthorizedHttpException( 'Unauthorized' );
+            throw new UnauthorizedHttpException( 'Unauthorized! You are not allowed to access this api' );
         }
 
         return $this->jobPostingRepository->getJobsByEmployerId( $employerId, $perPage );
@@ -77,14 +77,17 @@ class JobPostingService {
 
     public function changeJobStatus( int $jobId, string $status ): bool {
         $user = auth()->user();
+        $job = $this->findJobById( $jobId );
 
-        if ( !$user->isEmployer() ) {
-            throw new UnauthorizedHttpException( 'Unauthorized! You are not allowed to access this api' );
+        if($user->isAdmin()) {
+            return $this->jobPostingRepository->changeJobStatus( $jobId, $status );
         }
-        
-        $this->findJobById( $jobId );        
 
-        return $this->jobPostingRepository->changeJobStatus( $jobId, $status );
+        if($user->isEmployer() && $user->id === $job->user_id) {
+            return $this->jobPostingRepository->changeJobStatus( $jobId, $status );
+        }
+
+        throw new UnauthorizedHttpException( 'Unauthorized! You are not allowed to access this api' );
     }
 
     public function searchEmployerJobs(int $employerId, array $filters, int $perPage = 10): LengthAwarePaginator {

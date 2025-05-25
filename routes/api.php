@@ -34,37 +34,41 @@ Route::prefix('employer')->group(function () {
         Route::post('/logout', [EmployerController::class, 'logoutEmployer']);    
         Route::get('/application/{id}', [ApplicationController::class, 'findApplicationForEmployer']);     
         Route::get('/applications/by-job/{id}', [ApplicationController::class, 'getApplicationsByJobForEmployer']);    
+
+        Route::prefix('jobs')->group(function () {
+            Route::post('/', [JobPostingController::class, 'store']); 
+            Route::get('/', [JobPostingController::class, 'index']);  
+            Route::get('/search', [JobPostingController::class, 'search']); 
+            Route::get('/{id}', [JobPostingController::class, 'show']);   
+            Route::put('/{id}', [JobPostingController::class, 'update']);                         
+        });
     });
 });
 
-// job posting routes
-Route::middleware('employer')->group(function () {        
-    // job posting routes
-    Route::prefix('jobs')->group(function () {
-        Route::post('/', [JobPostingController::class, 'store']); 
-        Route::get('/', [JobPostingController::class, 'index']);  
-        Route::get('/search', [JobPostingController::class, 'search']); 
-        Route::get('/{id}', [JobPostingController::class, 'show']);   
-        Route::put('/{id}', [JobPostingController::class, 'update']);    
-        Route::patch('/status/{id}', [JobPostingController::class, 'changeJobStatus']);               
-    });
+// both admin and employer routes
+Route::middleware(['auth:sanctum', 'role:admin|employer'])->group(function () {
+    Route::patch('/jobs/{id}/status', [JobPostingController::class, 'changeJobStatus']);
 });
 
 // user routes
 Route::prefix('user')->group(function () {
+    // Public routes (no auth)
     Route::post('/register', [UserController::class, 'registerUser']);
     Route::post('/login', [UserController::class, 'loginUser']);
 
+    // Protected routes (require job_seeker role)
     Route::middleware('job_seeker')->group(function () {
+        // Auth routes
         Route::post('/logout', [UserController::class, 'logoutUser']);
-    });
-});
 
-// application routes
-Route::middleware('job_seeker')->group(function () {            
-    Route::prefix('application')->group(function () {
-        Route::post('/', [ApplicationController::class, 'store']);   
-        Route::get('/', [ApplicationController::class, 'index']);    
-        Route::get('/application/{id}', [ApplicationController::class, 'findApplicationForJobSeeker']);               
+        // Application routes
+        Route::prefix('applications')->group(function () {
+            Route::post('/', [ApplicationController::class, 'store']);
+            Route::get('/', [ApplicationController::class, 'index']);
+            Route::get('/{id}', [ApplicationController::class, 'findApplicationForJobSeeker']);
+        });
+
+        // Future job seeker-specific routes can go here
+        // Route::prefix('profile')->group(...);
     });
 });
