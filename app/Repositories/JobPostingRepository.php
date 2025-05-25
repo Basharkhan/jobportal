@@ -26,6 +26,7 @@ class JobPostingRepository implements JobPostingRepositoryInterface {
                 'benefits' => $data['benefits'] ?? null,
                 'requirements' => $data['requirements'] ?? null,
                 'responsibilities' => $data['responsibilities'] ?? null,
+                'status' => $data['status'] ?? 'draft',
             ]);
 
             return $job;

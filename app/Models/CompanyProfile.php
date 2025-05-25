@@ -25,6 +25,7 @@ class CompanyProfile extends Model {
         'industry_type',
         'trade_license_number',
         'is_verified',
+        'status'
     ];
 
     public function user(): BelongsTo {

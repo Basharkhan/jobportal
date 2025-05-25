@@ -7,15 +7,6 @@ use App\Http\Controllers\Api\JobPostingController;
 use App\Http\Controllers\Api\UserController;
 use Illuminate\Support\Facades\Route;
 
-
-Route::middleware('admin')->get('/admin/test', function () {
-    return response()->json([
-        'user' => auth()->user()->email,
-        'roles' => auth()->user()->getRoleNames(),
-    ]);
-});
-
-
 // admin routes
 Route::prefix('admin')->group(function () {
     Route::post('/login', [AdminController::class, 'loginAdmin']);
@@ -28,11 +19,10 @@ Route::prefix('admin')->group(function () {
         Route::get('/applications/by-job/{id}', [ApplicationController::class, 'getApplicationsByJobForAdmin']);    
         Route::delete('/application/{id}', [ApplicationController::class, 'deleteApplication']);        
         Route::delete('/jobs/{id}', [JobPostingController::class, 'deleteJob']);   
-        Route::get('/jobs', [JobPostingController::class, 'allJobs']);
+        Route::get('/jobs', [JobPostingController::class, 'allJobs']);        
         Route::get('/employers', [EmployerController::class, 'getAllEmployers']);        
     });
 });
-
 
 // employer routes
 Route::prefix('employer')->group(function () {
@@ -45,8 +35,6 @@ Route::prefix('employer')->group(function () {
         Route::get('/application/{id}', [ApplicationController::class, 'findApplicationForEmployer']);     
         Route::get('/applications/by-job/{id}', [ApplicationController::class, 'getApplicationsByJobForEmployer']);    
     });
-
-
 });
 
 // job posting routes
@@ -57,7 +45,8 @@ Route::middleware('employer')->group(function () {
         Route::get('/', [JobPostingController::class, 'index']);  
         Route::get('/search', [JobPostingController::class, 'search']); 
         Route::get('/{id}', [JobPostingController::class, 'show']);   
-        Route::put('/{id}', [JobPostingController::class, 'update']);                   
+        Route::put('/{id}', [JobPostingController::class, 'update']);    
+        Route::patch('/status/{id}', [JobPostingController::class, 'changeJobStatus']);               
     });
 });
 

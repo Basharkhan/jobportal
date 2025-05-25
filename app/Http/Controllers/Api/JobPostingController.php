@@ -147,12 +147,23 @@ class JobPostingController
 
     public function changeJobStatus( int $jobId, Request $request ) {
         try {
-            $status = $request->input( 'status' );
-            $this->jobPostingService->changeJobStatus( $jobId, $status );
+            $validated = $request->validate( [
+                'status' => 'required|in:draft,published,closed',
+            ] );
+            
+            $this->jobPostingService->changeJobStatus( $jobId, $validated['status'] );
+            
             return response()->json( [
                 'success' => true,
                 'message' => 'Job status updated successfully',
             ], Response::HTTP_OK );
+        } catch ( ValidationException $e ) {
+            throw $e;
+        } catch ( UnauthorizedHttpException $e ) {
+            return response()->json( [
+                'success' => false,
+                'message' => 'Unauthorized! You are not allowed to access this api'
+            ], Response::HTTP_UNAUTHORIZED );
         } catch ( Exception $e ) {
             Log::error( 'Job status change error: ' . $e->getMessage() );
             return response()->json( [
@@ -168,6 +179,7 @@ class JobPostingController
             $filters = $request->only('title', 'status', 'category_id', 'location_id', 'job_type');
             $perPage = $request->query('per_page', 10);
             $jobs = $this->jobPostingService->searchEmployerJobs( (int)$employerId, $filters, (int) $perPage );
+            
             return response()->json( [
                 'success' => true,
                 'data' => $jobs,

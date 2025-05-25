@@ -44,11 +44,7 @@ class JobPostingService {
 
         if ( !$job ) {
             throw new NotFoundHttpException( 'Job not found' );
-        }
-
-        if ( auth()->user()->id !== $job->user_id ) {
-            throw new UnauthorizedHttpException( 'Unauthorized' );
-        }
+        }       
 
         return $job;
     }    
@@ -66,9 +62,9 @@ class JobPostingService {
     public function deleteJob( int $jobId ): bool {
         $user = auth()->user();      
 
-        // if ( !$user->isAdmin() ) {
-        //     throw new UnauthorizedHttpException( 'Unauthorized! You are not allowed to access this api' );           
-        // } 
+        if ( !$user->isAdmin() ) {
+            throw new UnauthorizedHttpException( 'Unauthorized! You are not allowed to access this api' );           
+        } 
 
         $job = $this->findJobById( $jobId );
 
@@ -80,11 +76,13 @@ class JobPostingService {
     }
 
     public function changeJobStatus( int $jobId, string $status ): bool {
-        $job = $this->findJobById( $jobId );
+        $user = auth()->user();
 
-        if ( !$job ) {
-            throw new NotFoundHttpException( 'Job not found' );
+        if ( !$user->isEmployer() ) {
+            throw new UnauthorizedHttpException( 'Unauthorized! You are not allowed to access this api' );
         }
+        
+        $this->findJobById( $jobId );        
 
         return $this->jobPostingRepository->changeJobStatus( $jobId, $status );
     }

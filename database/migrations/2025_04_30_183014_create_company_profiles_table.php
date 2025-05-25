@@ -31,6 +31,7 @@ return new class extends Migration
             $table->string('industry_type');
             $table->string('trade_license_number');
             $table->boolean('is_verified')->default(false);
+            $table->boolean('status')->default(false); 
             $table->timestamps();
         });
     }

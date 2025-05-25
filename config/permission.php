@@ -198,10 +198,5 @@ return [
          */
 
         'store' => 'default',
-    ],
-
-    'defaults' => [
-        'guard' => 'api', // <-- match this with your actual guard
-    ],
-
+    ],   
 ];
