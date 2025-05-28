@@ -156,30 +156,7 @@ class UserAuthController {
                 'message' => 'Logout failed'
             ], 500 );
         }
-    }     
-
-    // public function getAllEmployers( Request $request ) {        
-    //     try {
-    //         $perPage = $request->input( 'per_page', 10 );
-    //         $employers = $this->employerService->getAllEmployers( $perPage );
-
-    //         return response()->json( [
-    //             'success' => true,
-    //             'data' => $employers,
-    //         ], Response::HTTP_OK );
-    //     } catch(UnauthorizedHttpException $e) {
-    //         return response()->json( [
-    //             'success' => false,
-    //             'message' => $e->getMessage()
-    //         ], Response::HTTP_UNAUTHORIZED );
-    //     } catch ( Exception $e ) {
-    //         Log::error( 'Get all employers error: ' . $e->getMessage() );
-    //         return response()->json( [
-    //             'success' => false,
-    //             'message' => 'Failed to retrieve employers'
-    //         ], Response::HTTP_INTERNAL_SERVER_ERROR );
-    //     }
-    // }
+    }       
 
     public function registerUser( UserRegistrationRequest $userRegistrationRequest ) {
         try {

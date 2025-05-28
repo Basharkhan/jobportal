@@ -1,8 +1,6 @@
 <?php
 
-use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\ApplicationController;
-use App\Http\Controllers\Api\EmployerController;
 use App\Http\Controllers\Api\JobPostingController;
 use App\Http\Controllers\Api\UserAuthController;
 use App\Http\Controllers\Api\UserController;
@@ -14,14 +12,32 @@ Route::prefix('admin')->group(function () {
 
     // 👇 Secure with admin group
     Route::middleware('admin')->group(function () {
+        // auth
         Route::post('/register', [UserAuthController::class, 'registerAdmin']);
         Route::post('/logout', [UserAuthController::class, 'logoutAdmin']);
-        Route::get('/application/{id}', [ApplicationController::class, 'findApplicationForAdmin']);  
+
+        // admins
+        Route::get('/admins', [UserController::class, 'getAllAdmins']);        
+
+        // employers
+        Route::get('/employers', [UserController::class, 'getEmployers']);        
+
+        // job seekers
+        Route::get('/job-seekers', [UserController::class, 'getAllJobSeekers']);
+        
+        // all users
+        // Route::get('/users/email/{email}', [UserController::class, 'getUserByEmail']);  
+        Route::get('/users/{id}', [UserController::class, 'getUserById']);      
+        Route::delete('/users/{id}', [UserController::class, 'deleteUser']);
+        
+        // applications
+        Route::get('/applications/{id}', [ApplicationController::class, 'findApplicationForAdmin']);  
         Route::get('/applications/by-job/{id}', [ApplicationController::class, 'getApplicationsByJobForAdmin']);    
         Route::delete('/application/{id}', [ApplicationController::class, 'deleteApplication']);        
+        
+        // jobs
         Route::delete('/jobs/{id}', [JobPostingController::class, 'deleteJob']);   
-        Route::get('/jobs', [JobPostingController::class, 'allJobs']);        
-        // Route::get('/employers', [EmployerController::class, 'getAllEmployers']);        
+        Route::get('/jobs', [JobPostingController::class, 'allJobs']);                      
     });
 });
 
