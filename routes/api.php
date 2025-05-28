@@ -24,11 +24,15 @@ Route::prefix('admin')->group(function () {
 
         // job seekers
         Route::get('/job-seekers', [UserController::class, 'getAllJobSeekers']);
+        Route::get('/job-seekers/{id}', [UserController::class, 'getJobSeekerById']);
+        Route::patch('/job-seekers/{id}/status', [UserController::class, 'changeJobSeekerStatus']);
         
         // all users
         // Route::get('/users/email/{email}', [UserController::class, 'getUserByEmail']);  
+        Route::get('/users', [UserController::class, 'getAllUsers']);
         Route::get('/users/{id}', [UserController::class, 'getUserById']);      
         Route::delete('/users/{id}', [UserController::class, 'deleteUser']);
+
         
         // applications
         Route::get('/applications/{id}', [ApplicationController::class, 'findApplicationForAdmin']);  
