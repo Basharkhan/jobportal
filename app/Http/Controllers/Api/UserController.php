@@ -34,10 +34,10 @@ class UserController {
         }
     }
 
-    public function getEmployers(Request $request) {
+    public function getAllEmployers(Request $request) {
         try {
             $perPage = $request->input('per_page', 10);
-            $employers = $this->userService->getEmployers($perPage);
+            $employers = $this->userService->getAllEmployers($perPage);
 
             return response()->json([
                 'success' => true,
@@ -108,6 +108,30 @@ class UserController {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to fetch user'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function getEmployerById(int $id) {
+        try {
+            $user = $this->userService->getEmployerById($id);
+            
+            return response()->json([
+                'success' => true,
+                'data' => $user
+            ], Response::HTTP_OK);
+        } catch(NotFoundHttpException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], Response::HTTP_NOT_FOUND);
+        } catch(ValidationException $e) {
+            throw $e; 
+        } catch (Exception $e) {
+            Log::error('Error fetching employer: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to fetch employer'
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -214,6 +238,35 @@ class UserController {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to change job seeker status'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function changeEmployerStatus(int $id, Request $request) {
+        try {
+            $validatedData = $request->validate([
+                'status' => 'required|integer|in:0,1'
+            ]);
+            $status = $validatedData['status'];
+
+            $user = $this->userService->changeEmployerStatus($id, $status);                
+
+            return response()->json([
+                'success' => true,
+                'data' => $user
+            ], Response::HTTP_OK);
+        } catch(ValidationException $e) {
+            throw $e; 
+        } catch (NotFoundHttpException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], Response::HTTP_NOT_FOUND);
+        } catch (Exception $e) {
+            Log::error('Error changing employer status: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to change employer status'
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

@@ -20,13 +20,15 @@ Route::prefix('admin')->group(function () {
         Route::get('/admins', [UserController::class, 'getAllAdmins']);        
 
         // employers
-        Route::get('/employers', [UserController::class, 'getEmployers']);        
-
+        Route::get('/employers', [UserController::class, 'getAllEmployers']); 
+        Route::get('/employers/{id}', [UserController::class, 'getEmployerById']);       
+        Route::patch('/employers/{id}/status', [UserController::class, 'changeEmployerStatus']);
+        
         // job seekers
         Route::get('/job-seekers', [UserController::class, 'getAllJobSeekers']);
         Route::get('/job-seekers/{id}', [UserController::class, 'getJobSeekerById']);
         Route::patch('/job-seekers/{id}/status', [UserController::class, 'changeJobSeekerStatus']);
-        
+
         // all users
         // Route::get('/users/email/{email}', [UserController::class, 'getUserByEmail']);  
         Route::get('/users', [UserController::class, 'getAllUsers']);

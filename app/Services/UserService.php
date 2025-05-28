@@ -13,8 +13,8 @@ class UserService {
         return $this->userRepository->getAllAdmins($perPage);
     }
     
-    public function getEmployers(int $perPage = 10): LengthAwarePaginator {
-        return $this->userRepository->getEmployers($perPage);
+    public function getAllEmployers(int $perPage = 10): LengthAwarePaginator {
+        return $this->userRepository->getAllEmployers($perPage);
     }
     
     public function getAllJobSeekers(int $perPage = 10): LengthAwarePaginator {
@@ -36,6 +36,16 @@ class UserService {
         return $user;
     }
 
+    public function getEmployerById(int $id) {
+        $user = $this->userRepository->getEmployerById($id);
+        
+        if (!$user) {
+            throw new NotFoundHttpException("Employer with ID {$id} not found.");
+        }
+
+        return $user;
+    }
+
     public function getJobSeekerById(int $id) {
         $user = $this->userRepository->getJobSeekerById($id);
         
@@ -53,6 +63,16 @@ class UserService {
     public function deleteUser(int $id) {
         $user = $this->getUserById($id);        
         return $user->delete();
+    }
+
+    public function changeEmployerStatus(int $id, string $status) {
+        $user = $this->getUserById($id);
+        
+        if (!$user->isEmployer()) {
+            throw new NotFoundHttpException("User with ID {$id} is not an employer.");
+        }
+
+        return $this->userRepository->changeEmployerStatus($id, $status);
     }
 
     public function changeJobSeekerStatus(int $id, string $status) {
