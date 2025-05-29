@@ -4,6 +4,8 @@ namespace App\Services;
 use App\Models\JobPosting;
 use App\Repositories\JobPostingRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Http\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
@@ -25,13 +27,7 @@ class JobPostingService {
         return $this->jobPostingRepository->getJobsByEmployerId( $employerId, $perPage );
     }
 
-    public function getAllJobs( int $perPage = 10 ): LengthAwarePaginator {
-        $user = auth()->user();
-
-        if(!$user->isAdmin()) {
-            throw new UnauthorizedHttpException( 'Unauthorized! You are not allowed to access this api' );
-        }
-
+    public function getAllJobs( int $perPage = 10 ): LengthAwarePaginator {        
         return $this->jobPostingRepository->getAllJobs( $perPage );           
     }
 
@@ -45,6 +41,24 @@ class JobPostingService {
         return $job;
     }    
 
+    public function getJobByIdForEmployer(int $jobId) {        
+        $user = auth()->user();
+        $job = $this->jobPostingRepository->findJobById($jobId);
+        
+        if ( !$job ) {
+            throw new NotFoundHttpException( 'Job not found' );
+        }  
+
+        if($user && $user->id !== $job->user_id) {
+            throw new HttpResponseException(response()->json([
+                'success' => false,
+                'message' => 'You are not allowed to access this resource!'
+            ], Response::HTTP_UNAUTHORIZED));
+        }
+        
+        return $job;
+    }
+
     public function updateJob( int $jobId, array $data ): ?JobPosting {
         $job = $this->findJobById( $jobId );
 
@@ -55,13 +69,7 @@ class JobPostingService {
         return $this->jobPostingRepository->updateJob( $jobId, $data );
     }
 
-    public function deleteJob( int $jobId ): bool {
-        $user = auth()->user();      
-
-        if ( !$user->isAdmin() ) {
-            throw new UnauthorizedHttpException( 'Unauthorized! You are not allowed to access this api' );           
-        } 
-
+    public function deleteJob( int $jobId ): bool {        
         $job = $this->findJobById( $jobId );
 
         if ( !$job ) {

@@ -25,8 +25,7 @@ class JobPostingRepository implements JobPostingRepositoryInterface {
                 'remote' => $data['remote'] ?? false,
                 'benefits' => $data['benefits'] ?? null,
                 'requirements' => $data['requirements'] ?? null,
-                'responsibilities' => $data['responsibilities'] ?? null,
-                'status' => $data['status'] ?? 'draft',
+                'responsibilities' => $data['responsibilities'] ?? null,                
             ]);
 
             return $job;
@@ -45,6 +44,10 @@ class JobPostingRepository implements JobPostingRepositoryInterface {
     public function findJobById(int $jobId): ?JobPosting{
         return JobPosting::find($jobId);
     }
+
+    // public function getJobByIdForEmployer(int $job): ?JobPosting {
+        
+    // }
 
     public function updateJob(int $jobId, array $data): ?JobPosting {
         return DB::transaction(function () use ($jobId, $data) {

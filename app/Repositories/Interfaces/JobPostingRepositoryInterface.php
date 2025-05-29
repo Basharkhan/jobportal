@@ -12,6 +12,8 @@ interface JobPostingRepositoryInterface {
 
     public function findJobById(int $jobId): ?JobPosting;
 
+    // public function getJobByIdForEmployer(int $id): ?JobPosting;
+
     public function updateJob(int $jobId, array $data): ?JobPosting;
 
     public function deleteJob(int $jobId): bool;

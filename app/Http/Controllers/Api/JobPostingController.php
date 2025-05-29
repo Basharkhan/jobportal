@@ -9,6 +9,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Exception;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
@@ -44,6 +45,7 @@ class JobPostingController
             $employerId = auth()->user()->id;
             $perPage = $request->query('per_page', 10);
             $jobs = $this->jobPostingService->getJobsByEmployerId( $employerId, $perPage );
+            
             return response()->json( [
                 'success' => true,
                 'data' => $jobs,
@@ -57,7 +59,7 @@ class JobPostingController
         }
     }
 
-    public function allJobs(Request $request) {
+    public function getAllJobs(Request $request) {
         try {
             $perPage = $request->query('per_page', 10);
             $jobs = $this->jobPostingService->getAllJobs( (int) $perPage );
@@ -82,10 +84,38 @@ class JobPostingController
     public function show( int $jobId ) {
         try {
             $job = $this->jobPostingService->findJobById( $jobId );
+            
             return response()->json( [
                 'success' => true,
                 'data' => $job,
             ], Response::HTTP_OK );
+        } catch(NotFoundHttpException $e) {
+            return response()->json( [
+                'success' => false,
+                'message' => $e->getMessage()
+            ], Response::HTTP_NOT_FOUND );
+        } catch ( Exception $e ) {
+            Log::error( 'Find job error: ' . $e->getMessage() );
+            return response()->json( [
+                'success' => false,
+                'message' => 'Failed to retrieve job'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR );
+        }
+    }
+
+    public function getJobByIdForEmployer(int $jobId) {
+        try {
+            $job = $this->jobPostingService->getJobByIdForEmployer( $jobId );
+            
+            return response()->json( [
+                'success' => true,
+                'data' => $job,
+            ], Response::HTTP_OK );
+        } catch(NotFoundHttpException $e) {
+            return response()->json( [
+                'success' => false,
+                'message' => $e->getMessage()
+            ], Response::HTTP_NOT_FOUND );
         } catch ( Exception $e ) {
             Log::error( 'Find job error: ' . $e->getMessage() );
             return response()->json( [
@@ -98,6 +128,7 @@ class JobPostingController
     public function update( int $jobId, JobRequest $jobRequest ) {
         try {
             $job = $this->jobPostingService->updateJob( $jobId, $jobRequest->validated() );
+            
             return response()->json( [
                 'success' => true,
                 'message' => 'Job updated successfully',
@@ -108,7 +139,7 @@ class JobPostingController
         } catch (NotFoundHttpException $e) {
             return response()->json( [
                 'success' => false,
-                'message' => 'Job not found'
+                'message' => $e->getMessage()
             ], Response::HTTP_NOT_FOUND );
         } catch ( Exception $e ) {
             Log::error( 'Job update error: ' . $e->getMessage() );
@@ -135,7 +166,7 @@ class JobPostingController
         } catch (NotFoundHttpException $e) {
             return response()->json( [
                 'success' => false,
-                'message' => 'Job not found'
+                'message' => $e->getMessage()
             ], Response::HTTP_NOT_FOUND );
         } catch ( Exception $e ) {
             Log::error( 'Job deletion error: ' . $e->getMessage() );

@@ -43,26 +43,32 @@ Route::prefix('admin')->group(function () {
         
         // jobs
         Route::delete('/jobs/{id}', [JobPostingController::class, 'deleteJob']);   
-        Route::get('/jobs', [JobPostingController::class, 'allJobs']);                      
+        Route::get('/jobs', [JobPostingController::class, 'getAllJobs']);    
+        Route::get('/jobs/{id}', [JobPostingController::class, 'show']);                  
     });
 });
 
 // employer routes
 Route::prefix('employer')->group(function () {
+    // auth
     Route::post('/register', [UserAuthController::class, 'registerEmployer']);
     Route::post('/login', [UserAuthController::class, 'loginEmployer']);
 
     // 👇 Secure logout with middleware group
     Route::middleware('employer')->group(function () {
+        // auth
         Route::post('/logout', [UserAuthController::class, 'logoutEmployer']);    
+
+
         Route::get('/application/{id}', [ApplicationController::class, 'findApplicationForEmployer']);     
         Route::get('/applications/by-job/{id}', [ApplicationController::class, 'getApplicationsByJobForEmployer']);    
 
+        // job posting
         Route::prefix('jobs')->group(function () {
             Route::post('/', [JobPostingController::class, 'store']); 
             Route::get('/', [JobPostingController::class, 'index']);  
-            Route::get('/search', [JobPostingController::class, 'search']); 
-            Route::get('/{id}', [JobPostingController::class, 'show']);   
+            Route::get('/{id}', [JobPostingController::class, 'getJobByIdForEmployer']);
+            Route::get('/search', [JobPostingController::class, 'search']);               
             Route::put('/{id}', [JobPostingController::class, 'update']);                         
         });
     });
@@ -70,7 +76,7 @@ Route::prefix('employer')->group(function () {
 
 // both admin and employer routes
 Route::middleware(['auth:sanctum', 'role:admin|employer'])->group(function () {
-    Route::patch('/jobs/{id}/status', [JobPostingController::class, 'changeJobStatus']);
+    Route::patch('/jobs/{id}/status', [JobPostingController::class, 'changeJobStatus']);     
 });
 
 // user routes
