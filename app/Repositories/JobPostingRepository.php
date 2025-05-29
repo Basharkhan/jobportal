@@ -4,6 +4,7 @@ namespace App\Repositories;
 use App\Models\JobPosting;
 use App\Repositories\Interfaces\JobPostingRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Contracts\Queue\Job;
 use Illuminate\Support\Facades\DB;
 
 class JobPostingRepository implements JobPostingRepositoryInterface {
@@ -43,11 +44,7 @@ class JobPostingRepository implements JobPostingRepositoryInterface {
 
     public function findJobById(int $jobId): ?JobPosting{
         return JobPosting::find($jobId);
-    }
-
-    // public function getJobByIdForEmployer(int $job): ?JobPosting {
-        
-    // }
+    }    
 
     public function updateJob(int $jobId, array $data): ?JobPosting {
         return DB::transaction(function () use ($jobId, $data) {
@@ -89,8 +86,7 @@ class JobPostingRepository implements JobPostingRepositoryInterface {
         });
     }
 
-    public function changeJobStatus(int $jobId, string $status): bool
-    {
+    public function changeJobStatus(int $jobId, string $status): ?JobPosting {
         return DB::transaction(function () use ($jobId, $status) {
             
             $job = JobPosting::find($jobId);
@@ -98,7 +94,7 @@ class JobPostingRepository implements JobPostingRepositoryInterface {
                 return false;
             }
 
-            $job->status = $status;
+            $job->job_status = $status;
             return $job->save();            
         });
     }
@@ -127,5 +123,21 @@ class JobPostingRepository implements JobPostingRepositoryInterface {
         }
 
         return $query->latest()->paginate($perPage);
+    }
+
+    public function changeApprovalStatus(int $jobId, string $status): ?JobPosting {
+        return DB::transaction(function () use ($jobId, $status) {
+            $job = JobPosting::find($jobId);
+            if (!$job) {
+                return null;
+            }
+
+            $job->approval_status = $status;
+            if ($job->save()) {
+                return $job;
+            }
+
+            return null;
+        });
     }
 }

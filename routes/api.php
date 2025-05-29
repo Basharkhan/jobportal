@@ -38,13 +38,14 @@ Route::prefix('admin')->group(function () {
         
         // applications
         Route::get('/applications/{id}', [ApplicationController::class, 'findApplicationForAdmin']);  
-        Route::get('/applications/by-job/{id}', [ApplicationController::class, 'getApplicationsByJobForAdmin']);    
+        Route::get('/applications/by-job/{jobId}', [ApplicationController::class, 'getApplicationsByJobForAdmin']);    
         Route::delete('/application/{id}', [ApplicationController::class, 'deleteApplication']);        
         
         // jobs
         Route::delete('/jobs/{id}', [JobPostingController::class, 'deleteJob']);   
         Route::get('/jobs', [JobPostingController::class, 'getAllJobs']);    
-        Route::get('/jobs/{id}', [JobPostingController::class, 'show']);                  
+        Route::get('/jobs/{id}', [JobPostingController::class, 'show']);   
+        Route::patch('/jobs/{id}/status', [JobPostingController::class, 'changeApprovalStatus']);               
     });
 });
 
@@ -79,15 +80,15 @@ Route::middleware(['auth:sanctum', 'role:admin|employer'])->group(function () {
     Route::patch('/jobs/{id}/status', [JobPostingController::class, 'changeJobStatus']);     
 });
 
-// user routes
-Route::prefix('user')->group(function () {
-    // Public routes (no auth)
+// job seeker routes
+Route::prefix('job-seeker')->group(function () {
+    // auth
     Route::post('/register', [UserAuthController::class, 'registerUser']);
     Route::post('/login', [UserAuthController::class, 'loginUser']);
 
     // Protected routes (require job_seeker role)
     Route::middleware('job_seeker')->group(function () {
-        // Auth routes
+        // auth
         Route::post('/logout', [UserAuthController::class, 'logoutUser']);
 
         // Application routes
@@ -95,9 +96,6 @@ Route::prefix('user')->group(function () {
             Route::post('/', [ApplicationController::class, 'store']);
             Route::get('/', [ApplicationController::class, 'index']);
             Route::get('/{id}', [ApplicationController::class, 'findApplicationForJobSeeker']);
-        });
-
-        // Future job seeker-specific routes can go here
-        // Route::prefix('profile')->group(...);
+        });        
     });
 });

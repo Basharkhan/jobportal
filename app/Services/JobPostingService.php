@@ -4,8 +4,8 @@ namespace App\Services;
 use App\Models\JobPosting;
 use App\Repositories\JobPostingRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Http\Response;
+use Symfony\Component\Finder\Exception\AccessDeniedException;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnauthorizedHttpException;
 
@@ -50,10 +50,7 @@ class JobPostingService {
         }  
 
         if($user && $user->id !== $job->user_id) {
-            throw new HttpResponseException(response()->json([
-                'success' => false,
-                'message' => 'You are not allowed to access this resource!'
-            ], Response::HTTP_UNAUTHORIZED));
+            throw new AccessDeniedHttpException("You are not allowed to access this resource!");
         }
         
         return $job;
@@ -79,7 +76,7 @@ class JobPostingService {
         return $this->jobPostingRepository->deleteJob( $jobId );         
     }
 
-    public function changeJobStatus( int $jobId, string $status ): bool {
+    public function changeJobStatus( int $jobId, string $status ): ?JobPosting {
         $user = auth()->user();
         $job = $this->findJobById( $jobId );
 
@@ -96,5 +93,10 @@ class JobPostingService {
 
     public function searchEmployerJobs(int $employerId, array $filters, int $perPage = 10): LengthAwarePaginator {
         return $this->jobPostingRepository->searchEmployerJobs($employerId, $filters, $perPage);    
+    }
+
+    public function changeApprovalStatus(int $jobId, string $status): ?JobPosting {        
+        $this->findJobById($jobId);
+        return $this->jobPostingRepository->changeApprovalStatus($jobId, $status);
     }
 }

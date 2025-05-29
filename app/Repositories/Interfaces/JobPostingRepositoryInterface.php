@@ -10,15 +10,15 @@ interface JobPostingRepositoryInterface {
 
     public function getAllJobs(int $perPage=10): LengthAwarePaginator;
 
-    public function findJobById(int $jobId): ?JobPosting;
-
-    // public function getJobByIdForEmployer(int $id): ?JobPosting;
+    public function findJobById(int $jobId): ?JobPosting;    
 
     public function updateJob(int $jobId, array $data): ?JobPosting;
 
     public function deleteJob(int $jobId): bool;
 
-    public function changeJobStatus(int $jobId, string $status): bool;
+    public function changeJobStatus(int $jobId, string $status): ?JobPosting;
 
     public function searchEmployerJobs(int $employerId, array $filters, int $perPage=10): LengthAwarePaginator;
+
+    public function changeApprovalStatus(int $jobId, string $status): ?JobPosting;
 }

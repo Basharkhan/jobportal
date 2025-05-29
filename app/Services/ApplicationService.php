@@ -6,8 +6,6 @@ use App\Repositories\ApplicationRepository;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-use function PHPUnit\Framework\isEmpty;
-
 class ApplicationService {
     public function __construct(protected ApplicationRepository $applicationRepository) {
         
