@@ -41,7 +41,7 @@ class UserAuthController {
         }
     }
 
-    public function loginAdmin( UserLoginReuqest $userLoginReuqest ) {
+    public function loginAdmin( UserLoginReuqest $userLoginReuqest ) {        
         try {
             $token = $this->userAuthService->login(
                 $userLoginReuqest->input( 'email' ),
@@ -59,7 +59,7 @@ class UserAuthController {
         } catch ( AuthenticationException $e ) {
             return response()->json( [
                 'success' => false,
-                'message' => 'Invalid credentials'
+                'message' => $e->getMessage()
             ], Response::HTTP_UNAUTHORIZED );
         } catch ( Exception $e ) {
             Log::error( 'Admin login error: ' . $e->getMessage() );

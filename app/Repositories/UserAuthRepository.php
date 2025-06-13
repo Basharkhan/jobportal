@@ -3,6 +3,7 @@ namespace App\Repositories;
 
 use App\Models\User;
 use App\Repositories\Interfaces\UserAuthRepositoryInterface;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -20,8 +21,11 @@ class UserAuthRepository implements UserAuthRepositoryInterface {
         return User::where( 'email', $email )->first();
     }    
 
-    public function validateCredentials( User $user, string $password ): bool {
-        return Hash::check($password, $user->password);
+    public function validateCredentials( User $user, string $password ): bool {        
+        if(!Hash::check($password, $user->password)) {
+            throw new AuthenticationException('Invalid credentials');
+        }
+        return true;
     }
 
     public function revokeAuthTokens( User $user, bool $revokeAll = false ): void {

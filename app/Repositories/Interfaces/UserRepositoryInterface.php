@@ -23,7 +23,7 @@ interface UserRepositoryInterface {
 
     public function deleteUser(int $id): bool;
 
-    public function changeEmployerStatus(int $id, string $status): ?User;
+    public function changeEmployerStatus(int $id, int $status): ?User;
 
-    public function changeJobSeekerStatus(int $id, string $status): ?User;
+    public function changeJobSeekerStatus(int $id, int $status): ?User;
 }

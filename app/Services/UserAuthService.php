@@ -23,17 +23,13 @@ class UserAuthService {
     public function login( string $email, string $password, $expectedRole ) {
         $user = $this->userAuthRepository->findByEmail( $email );
 
-        if ( !$user ) {
-            throw new AuthenticationException( 'User not found' );
-        }
-
-        if ( !$user->hasRole( $expectedRole ) ) {
-            throw new UnauthorizedHttpException( 'Unauthorized', 'You are not authorized to access this resource.' );
-        }
-
-        $this->userAuthRepository->revokeAuthTokens( $user, true );
+        if ( !$user || !$user->hasRole($expectedRole)) {
+            throw new AuthenticationException( 'Invalid credentils' );
+        }               
 
         $this->userAuthRepository->validateCredentials( $user, $password );
+        $this->userAuthRepository->revokeAuthTokens( $user, true );
+
         return $user->createToken( 'user-token')->plainTextToken;
     }
 

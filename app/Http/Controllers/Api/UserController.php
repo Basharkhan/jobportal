@@ -253,6 +253,7 @@ class UserController {
 
             return response()->json([
                 'success' => true,
+                'message' => 'Employer status changed successfully',
                 'data' => $user
             ], Response::HTTP_OK);
         } catch(ValidationException $e) {

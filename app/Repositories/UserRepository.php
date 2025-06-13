@@ -11,7 +11,7 @@ class UserRepository implements UserRepositoryInterface {
     }
 
     public function getAllEmployers(int $perPage = 10): LengthAwarePaginator {
-        return User::role('employer')->with('roles')->latest()->paginate($perPage);
+        return User::role('employer')->with('roles', 'companyProfile')->latest()->paginate($perPage);
     }
 
     public function getAllJobSeekers(int $perPage = 10): LengthAwarePaginator {            
@@ -46,22 +46,16 @@ class UserRepository implements UserRepositoryInterface {
         return false;
     }
 
-    public function changeEmployerStatus(int $id, string $status): ?User{
-        $user = User::with('companyProfile')->find($id);
-        if ($user && $user->isEmployer()) {
-            $user->companyProfile()->update(['status' => $status]);
-            return $user;
-        }
-        return null;
+    public function changeEmployerStatus(int $id, int $status): ?User{
+        $user = User::has('companyProfile')->findOrFail($id);
+        $user->companyProfile()->update(['status' => $status]);
+        return $user->load('companyProfile');
     }
 
-    public function changeJobSeekerStatus(int $id, string $status): ?User {
-        $user = User::with('seekerProfile')->find($id);
-        if ($user && $user->isJobSeeker()) {
-            $user->seekerProfile()->update(['status' => $status]);
-            return $user;
-        }
-        return null;
+    public function changeJobSeekerStatus(int $id, int $status): ?User {
+        $user = User::has('seekerProfile')->findOrFail($id);
+        $user->seekerProfile()->update(['status' => $status]);        
+        return $user->load('seekerProfile');
     }
 }
 
