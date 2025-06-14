@@ -72,7 +72,7 @@ class UserAuthRepository implements UserAuthRepositoryInterface {
         });
     }
 
-    public function registerUser(array $data): ?User {
+    public function registerJobSeeker(array $data): ?User {
         return DB::transaction(function () use ($data) {
             $user = User::create([
                 'name' => $data['name'],

@@ -141,6 +141,11 @@ class JobPostingController
             ], Response::HTTP_OK );
         } catch ( ValidationException $e ) {
             throw $e;
+        } catch(AccessDeniedHttpException $e) {
+            return response()->json( [
+                'success' => false,
+                'message' => $e->getMessage()
+            ], Response::HTTP_FORBIDDEN );
         } catch (NotFoundHttpException $e) {
             return response()->json( [
                 'success' => false,

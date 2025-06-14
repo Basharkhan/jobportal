@@ -158,9 +158,9 @@ class UserAuthController {
         }
     }       
 
-    public function registerUser( UserRegistrationRequest $userRegistrationRequest ) {
+    public function registerJobSeeker( UserRegistrationRequest $userRegistrationRequest ) {
         try {
-            $admin = $this->userAuthService->registerUser( $userRegistrationRequest->validated() );
+            $admin = $this->userAuthService->registerJobSeeker( $userRegistrationRequest->validated() );
             $token = $admin->createToken( 'user_token' )->plainTextToken;
 
             return response()->json( [
@@ -180,7 +180,7 @@ class UserAuthController {
         }
     }
 
-    public function loginUser(UserLoginReuqest $userLoginReuqest) {
+    public function loginJobSeeker(UserLoginReuqest $userLoginReuqest) {
         try {
             $token = $this->userAuthService->login(
                 $userLoginReuqest->input( 'email' ),

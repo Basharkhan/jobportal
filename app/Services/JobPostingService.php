@@ -19,11 +19,7 @@ class JobPostingService {
         return $this->jobPostingRepository->createJob( $data );
     }
 
-    public function getJobsByEmployerId( int $employerId, int  $perPage) {
-        if ( auth()->user()->id !== $employerId ) {
-            throw new UnauthorizedHttpException( 'Unauthorized! You are not allowed to access this api' );
-        }
-
+    public function getJobsByEmployerId( int $employerId, int  $perPage) {        
         return $this->jobPostingRepository->getJobsByEmployerId( $employerId, $perPage );
     }
 
@@ -57,12 +53,17 @@ class JobPostingService {
     }
 
     public function updateJob( int $jobId, array $data ): ?JobPosting {
+        $user = auth()->user();
         $job = $this->findJobById( $jobId );
 
         if ( !$job ) {
             throw new NotFoundHttpException( 'Job not found' );
         }
 
+        if($user && $user->id !== $job->user_id) {
+            throw new AccessDeniedHttpException("You are not allowed to access this resource!");
+        }
+        
         return $this->jobPostingRepository->updateJob( $jobId, $data );
     }
 

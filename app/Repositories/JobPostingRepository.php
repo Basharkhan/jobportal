@@ -4,7 +4,6 @@ namespace App\Repositories;
 use App\Models\JobPosting;
 use App\Repositories\Interfaces\JobPostingRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Contracts\Queue\Job;
 use Illuminate\Support\Facades\DB;
 
 class JobPostingRepository implements JobPostingRepositoryInterface {

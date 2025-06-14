@@ -14,5 +14,5 @@ interface UserAuthRepositoryInterface {
 
     public function registerEmployer( array $data ): ?User;
 
-    public function registerUser( array $data ): ?User;
+    public function registerJobSeeker( array $data ): ?User;
 }

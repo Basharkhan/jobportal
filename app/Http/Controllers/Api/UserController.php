@@ -7,6 +7,7 @@ use App\Services\UserService;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Exception;
+use FFI;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -160,12 +161,16 @@ class UserController {
         }
     }
 
-    public function getUserByEmail(Request $request) {
+    public function getUserByEmail(string $email) {        
         try {
-            $validatedData = $request->validate([
-                'email' => 'required|email'
-            ]);
-            $email = $validatedData['email'];
+            $email = urldecode($email);
+            
+            if(!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Invalid email format'
+                ], Response::HTTP_BAD_REQUEST);
+            }            
 
             $user = $this->userService->getUserByEmail($email);
             

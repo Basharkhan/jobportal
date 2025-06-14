@@ -29,13 +29,13 @@ Route::prefix('admin')->group(function () {
         Route::get('/job-seekers/{id}', [UserController::class, 'getJobSeekerById']);
         Route::patch('/job-seekers/{id}/status', [UserController::class, 'changeJobSeekerStatus']);
 
-        // all users
-        // Route::get('/users/email/{email}', [UserController::class, 'getUserByEmail']);  
+        // all users (admins, employers, job seekers)
+        Route::get('/users/email/{email}', [UserController::class, 'getUserByEmail']);  
         Route::get('/users', [UserController::class, 'getAllUsers']);
         Route::get('/users/{id}', [UserController::class, 'getUserById']);      
         Route::delete('/users/{id}', [UserController::class, 'deleteUser']);
-
         
+        // didn't test
         // applications
         Route::get('/applications/{id}', [ApplicationController::class, 'findApplicationForAdmin']);  
         Route::get('/applications/by-job/{jobId}', [ApplicationController::class, 'getApplicationsByJobForAdmin']);    
@@ -60,7 +60,7 @@ Route::prefix('employer')->group(function () {
         // auth
         Route::post('/logout', [UserAuthController::class, 'logoutEmployer']);    
 
-
+        // didn't test
         Route::get('/application/{id}', [ApplicationController::class, 'findApplicationForEmployer']);     
         Route::get('/applications/by-job/{id}', [ApplicationController::class, 'getApplicationsByJobForEmployer']);    
 
@@ -68,8 +68,8 @@ Route::prefix('employer')->group(function () {
         Route::prefix('jobs')->group(function () {
             Route::post('/', [JobPostingController::class, 'store']); 
             Route::get('/', [JobPostingController::class, 'index']);  
-            Route::get('/{id}', [JobPostingController::class, 'getJobByIdForEmployer']);
-            Route::get('/search', [JobPostingController::class, 'search']);               
+            Route::get('/search', [JobPostingController::class, 'search']);    
+            Route::get('/{id}', [JobPostingController::class, 'getJobByIdForEmployer']);                       
             Route::put('/{id}', [JobPostingController::class, 'update']);                         
         });
     });
@@ -83,14 +83,15 @@ Route::middleware(['auth:sanctum', 'role:admin|employer'])->group(function () {
 // job seeker routes
 Route::prefix('job-seeker')->group(function () {
     // auth
-    Route::post('/register', [UserAuthController::class, 'registerUser']);
-    Route::post('/login', [UserAuthController::class, 'loginUser']);
+    Route::post('/register', [UserAuthController::class, 'registerJobSeeker']);
+    Route::post('/login', [UserAuthController::class, 'loginJobSeeker']);
 
     // Protected routes (require job_seeker role)
     Route::middleware('job_seeker')->group(function () {
         // auth
         Route::post('/logout', [UserAuthController::class, 'logoutUser']);
 
+        // didn't test
         // Application routes
         Route::prefix('applications')->group(function () {
             Route::post('/', [ApplicationController::class, 'store']);
