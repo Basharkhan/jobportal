@@ -90,13 +90,11 @@ Route::prefix('job-seeker')->group(function () {
     Route::middleware('job_seeker')->group(function () {
         // auth
         Route::post('/logout', [UserAuthController::class, 'logoutUser']);
-
-        // didn't test
+        
         // Application routes
         Route::prefix('applications')->group(function () {
             Route::post('/', [ApplicationController::class, 'store']);
-            Route::get('/', [ApplicationController::class, 'index']);
-            Route::get('/{id}', [ApplicationController::class, 'findApplicationForJobSeeker']);
+            Route::get('/', [ApplicationController::class, 'index']);            
         });        
     });
 });

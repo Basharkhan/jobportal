@@ -17,7 +17,7 @@ class ApplicationRepository implements ApplicationRepositoryInterface {
         return $application;
     }
 
-    public function getApplicationsByUser(int $userId, int $perPage=10): LengthAwarePaginator {
+    public function getApplicationsByJobSeeker(int $userId, int $perPage=10): LengthAwarePaginator {
         return Application::where('user_id', $userId)
             ->with(['jobPosting', 'seeker'])
             ->orderBy('created_at', 'desc')
@@ -28,6 +28,11 @@ class ApplicationRepository implements ApplicationRepositoryInterface {
         return Application::with(['jobPosting', 'seeker'])
             ->where('id', $applicationId)
             ->first();
+    }
+
+    public function getApplicationByJobSeekerIdAndJobPostingId(int $jobSeekerId, int $jobPostingId): ?Application {        
+        return Application::where('user_id', $jobSeekerId)->where('job_posting_id', $jobPostingId)
+            ->first();                        
     }
 
     public function getApplicationsByJob(int $jobId, int $perPage=10): LengthAwarePaginator {

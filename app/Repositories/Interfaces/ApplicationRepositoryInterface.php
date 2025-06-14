@@ -6,10 +6,12 @@ use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 interface ApplicationRepositoryInterface {
     public function applyToJob(array $data): ?Application;
 
-    public function getApplicationsByUser(int $userId, int $perPage=10): LengthAwarePaginator;
+    public function getApplicationsByJobSeeker(int $userId, int $perPage=10): LengthAwarePaginator;
 
     public function findApplication(int $applicationId): ?Application;
     
+    public function getApplicationByJobSeekerIdAndJobPostingId(int $jobSeekerId, int $jobPostingId): ?Application;
+
     public function getApplicationsByJob(int $jobId, int $perPage=10): LengthAwarePaginator;
     
     // public function updateStatus(int $applicationId, string $status): bool;

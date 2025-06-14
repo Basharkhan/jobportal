@@ -17,20 +17,12 @@ class ApplicationController {
         
     }
 
-    public function store(ApplicationRequest $applicationRequest) {
-        try {
-            $validatedData = $applicationRequest->validated();
-
-            if($applicationRequest->hasFile(('resume'))) {
-                $file = $applicationRequest->file('resume');
-                $fileName = time() . '_' . $file->getClientOriginalName();
-                $file->move(public_path('resumes'), $fileName);
-                $validatedData['resume'] = $fileName;
-            }
-
-            $validatedData['user_id'] = auth()->user()->id;
-
-            $application = $this->applicationService->applyToJob($validatedData);
+    public function store(ApplicationRequest $request) {        
+        try {            
+            $application = $this->applicationService->applyToJob(
+                $request->validated(),
+                $request->file('resume')
+            );
             
             return response()->json([
                 'status' => 'success',
@@ -38,6 +30,11 @@ class ApplicationController {
             ], Response::HTTP_CREATED);
         } catch ( ValidationException $e ) {
             throw $e;
+        } catch(AccessDeniedHttpException $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], Response::HTTP_FORBIDDEN);
         } catch (Exception $e) {
             Log::error( 'Employer login error: ' . $e->getMessage() );
             return response()->json([
@@ -51,7 +48,7 @@ class ApplicationController {
         try {
             $perPage = $request->query('per_page', 10);
             $userId = auth()->user()->id;
-            $applications = $this->applicationService->getApplicationsByUser($userId, $perPage);
+            $applications = $this->applicationService->getApplicationsByJobSeeker($userId, $perPage);
 
             return response()->json([
                 'status' => 'success',
@@ -118,34 +115,7 @@ class ApplicationController {
                 'message' => $e->getMessage()
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-    }
-
-    public function findApplicationForJobSeeker(int $id) {
-        try {
-            $application = $this->applicationService->findApplicationForAdmin($id);
-            
-            return response()->json([
-                'status' => 'success',
-                'data' => $application
-            ], Response::HTTP_OK);
-        } catch(AccessDeniedHttpException $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'You are not authorized to access this application'
-            ], Response::HTTP_FORBIDDEN);
-        } catch(NotFoundHttpException $e) {
-            return response()->json([
-                'status' => 'error',
-                'message' => 'Application not found'
-            ], Response::HTTP_NOT_FOUND);
-        } catch (Exception $e) {
-            Log::error( 'Failed to retrieve application: ' . $e->getMessage() );
-            return response()->json([
-                'status' => 'error',
-                'message' => $e->getMessage()
-            ], Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
-    }
+    }  
 
     public function getApplicationsByJobForAdmin(int $jobId, Request $request) {
         try {

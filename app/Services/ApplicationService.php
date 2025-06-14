@@ -3,20 +3,42 @@ namespace App\Services;
 
 use App\Models\Application;
 use App\Repositories\ApplicationRepository;
+use Illuminate\Http\UploadedFile;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Support\Str;
 
 class ApplicationService {
     public function __construct(protected ApplicationRepository $applicationRepository) {
         
     }
 
-    public function applyToJob(array $data): ?Application {
-        return $this->applicationRepository->applyToJob($data);
-    }    
+   public function applyToJob(array $data, ?UploadedFile $resumeFile): ?Application {
+        $user = auth()->user();
+        $jobPostingId = $data['job_posting_id'];
+        $existingApplication = $this->applicationRepository->getApplicationByJobSeekerIdAndJobPostingId($user->id, $jobPostingId);
+        
+        if ($existingApplication && $existingApplication->job_posting_id == $data['job_posting_id']) {
+            throw new AccessDeniedHttpException('You have already applied for this job');
+        }
 
-    public function getApplicationsByUser(int $userId, int $perPage=10) {
-        return $this->applicationRepository->getApplicationsByUser($userId, $perPage);
+        if ($resumeFile) {
+            $data['resume'] = $this->uploadResume($resumeFile);
+        }
+
+        $data['user_id'] = $user->id;
+
+        return $this->applicationRepository->applyToJob($data);
+    }   
+
+    public function uploadResume(UploadedFile $file): string {
+        $fileName = time() . '_' . Str::slug($file->getClientOriginalName());
+        $file->storeAs('resumes', $fileName, 'public'); 
+        return $fileName;
+    }
+
+    public function getApplicationsByJobSeeker(int $userId, int $perPage=10) {
+        return $this->applicationRepository->getApplicationsByJobSeeker($userId, $perPage);
     }
 
 
@@ -28,18 +50,7 @@ class ApplicationService {
         }        
 
         return $application;
-    }    
-
-    public function findApplicationForAdmin(int $applicationId): ?Application {        
-        $user = auth()->user();
-
-        if(!$user->isAdmin()) {
-            throw new AccessDeniedHttpException('You are not authorized to access this application');
-        }
-
-        $application =  $this->findApplication($applicationId); 
-        return $application;
-    }
+    }        
 
      public function findApplicationForEmployer(int $applicationId): ?Application {
         $user = auth()->user();
