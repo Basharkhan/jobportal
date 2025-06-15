@@ -34,10 +34,10 @@ Route::prefix('admin')->group(function () {
         Route::get('/users', [UserController::class, 'getAllUsers']);
         Route::get('/users/{id}', [UserController::class, 'getUserById']);      
         Route::delete('/users/{id}', [UserController::class, 'deleteUser']);
-        
-        // didn't test
+                
         // applications
-        Route::get('/applications/{id}', [ApplicationController::class, 'findApplicationForAdmin']);  
+        Route::get('/applications', [ApplicationController::class, 'getApplicationsForAdmin']);  
+        Route::get('/applications/{id}', [ApplicationController::class, 'getApplicationByIdForAdmin']);  
         Route::get('/applications/by-job/{jobId}', [ApplicationController::class, 'getApplicationsByJobForAdmin']);    
         Route::delete('/application/{id}', [ApplicationController::class, 'deleteApplication']);        
         
@@ -59,9 +59,7 @@ Route::prefix('employer')->group(function () {
     Route::middleware('employer')->group(function () {
         // auth
         Route::post('/logout', [UserAuthController::class, 'logoutEmployer']);    
-
-        // didn't test
-        Route::get('/application/{id}', [ApplicationController::class, 'findApplicationForEmployer']);     
+                
         Route::get('/applications/by-job/{id}', [ApplicationController::class, 'getApplicationsByJobForEmployer']);    
 
         // job posting

@@ -12,9 +12,13 @@ interface ApplicationRepositoryInterface {
     
     public function getApplicationByJobSeekerIdAndJobPostingId(int $jobSeekerId, int $jobPostingId): ?Application;
 
-    public function getApplicationsByJob(int $jobId, int $perPage=10): LengthAwarePaginator;
+    public function getApplicationsByJobForAdmin(int $jobId, int $perPage=10): LengthAwarePaginator;
     
+    public function getApplicationsByJobForEmployer(int $jobId, int $perPage=10): LengthAwarePaginator;
+
     // public function updateStatus(int $applicationId, string $status): bool;
 
     public function deleteApplication(int $applicationId): bool;
+
+    public function getApplications(int $perPage=10): LengthAwarePaginator;
 }

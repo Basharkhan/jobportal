@@ -35,11 +35,25 @@ class ApplicationRepository implements ApplicationRepositoryInterface {
             ->first();                        
     }
 
-    public function getApplicationsByJob(int $jobId, int $perPage=10): LengthAwarePaginator {
+    public function getApplicationsByJobForAdmin(int $jobId, int $perPage=10): LengthAwarePaginator {
         return Application::where('job_posting_id', $jobId)
             ->with(['jobPosting', 'seeker'])
             ->orderBy('created_at', 'desc')
             ->paginate($perPage);
+    }
+
+    public function getApplicationsByJobForEmployer(int $jobId, int $perPage=10): LengthAwarePaginator {
+        $employerId = auth()->user()->id;
+        
+        $applications = Application::whereHas('jobPosting', function($query) use ($employerId) {
+                $query->where('user_id', $employerId);
+            })
+            ->where('job_posting_id', $jobId)
+            ->with(['jobPosting', 'seeker'])
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
+        
+        return $applications;
     }
 
     public function deleteApplication(int $applicationId): bool {
@@ -48,5 +62,11 @@ class ApplicationRepository implements ApplicationRepositoryInterface {
             return $application->delete();
         }
         return false;
+    }
+
+    public function getApplications(int $perPage=10): LengthAwarePaginator {
+        return Application::with(['jobPosting', 'seeker'])
+            ->orderBy('created_at', 'desc')
+            ->paginate($perPage);
     }
 }

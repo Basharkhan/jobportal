@@ -52,6 +52,12 @@ class ApplicationService {
         return $application;
     }        
 
+
+    public function getApplicationByIdForAdmin(int $applicationId): ?Application {        
+        $application =  $this->findApplication($applicationId);          
+        return $application;
+    }
+
      public function findApplicationForEmployer(int $applicationId): ?Application {
         $user = auth()->user();
 
@@ -74,14 +80,8 @@ class ApplicationService {
         return $application;
     }    
 
-    public function getApplicationsByJobForAdmin(int $jobId, int $perPage=10) {
-        $user = auth()->user();
-
-        if(!$user->isAdmin()) {
-            throw new AccessDeniedHttpException('You are not authorized to access this application');
-        }
-        
-        $applications = $this->applicationRepository->getApplicationsByJob($jobId, $perPage);
+    public function getApplicationsByJobForAdmin(int $jobId, int $perPage=10) {        
+        $applications = $this->applicationRepository->getApplicationsByJobForAdmin($jobId, $perPage);
         
         if ($applications->total() == 0) {
             throw new NotFoundHttpException('Applications not found');
@@ -90,14 +90,8 @@ class ApplicationService {
         return $applications;
     }
 
-    public function getApplicationsByJobForEmployer(int $jobId, int $perPage=10) {
-        $user = auth()->user();
-
-        if(!$user->isEmployer()) {
-            throw new AccessDeniedHttpException('You are not authorized to access this application');
-        }
-        
-        $applications = $this->applicationRepository->getApplicationsByJob($jobId, $perPage);
+    public function getApplicationsByJobForEmployer(int $jobId, int $perPage=10) {                
+        $applications = $this->applicationRepository->getApplicationsByJobForEmployer($jobId, $perPage);
 
         if ($applications->total() == 0) {
             throw new NotFoundHttpException('Applications not found');
@@ -114,5 +108,9 @@ class ApplicationService {
         }
 
         return $this->applicationRepository->deleteApplication($applicationId);
+    }
+
+    public function getApplications(int $perPage) {
+        return $this->applicationRepository->getApplications($perPage);
     }
 }
