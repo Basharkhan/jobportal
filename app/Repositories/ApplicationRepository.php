@@ -54,7 +54,7 @@ class ApplicationRepository implements ApplicationRepositoryInterface {
             ->paginate($perPage);
         
         return $applications;
-    }
+    }    
 
     public function deleteApplication(int $applicationId): bool {
         $application = $this->findApplication($applicationId);

@@ -131,6 +131,32 @@ class ApplicationController {
         }
     }
 
+    public function updateApplicationStatus(int $id, Request $request) {
+        try {
+            $status = $request->input('status');
+            if (!in_array($status, ['pending', 'accepted', 'rejected'])) {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Invalid status'
+                ], Response::HTTP_BAD_REQUEST);
+            }
+
+            $updatedApplication = $this->applicationService->updateApplicationStatus($id, $status);
+            
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Application status updated successfully',
+                'data' => $updatedApplication
+            ], Response::HTTP_OK);
+        } catch (Exception $e) {
+            Log::error( 'Failed to update application status: ' . $e->getMessage() );
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
     public function deleteApplication(int $id) {
         try {
             $deleted = $this->applicationService->deleteApplication($id);

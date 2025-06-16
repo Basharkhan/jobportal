@@ -100,6 +100,22 @@ class ApplicationService {
         return $applications;
     }
 
+    public function updateApplicationStatus(int $applicationId, string $status) {  
+        $user = auth()->user();
+        $application = Application::with('jobPosting')->findOrFail($applicationId);
+        // return $application;
+        // dd($application);
+        if($user->isEmployer()) {
+            if($application->jobPosting->user_id !== $user->id) {
+                throw new AccessDeniedHttpException('You are not authorized to update this application status');
+            }
+        } 
+
+        $application->update(['status' => $status]);        
+
+        return $application->fresh(['jobPosting']);
+    }
+
     public function deleteApplication(int $applicationId): bool {
         $user = auth()->user();
 

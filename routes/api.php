@@ -76,6 +76,7 @@ Route::prefix('employer')->group(function () {
 // both admin and employer routes
 Route::middleware(['auth:sanctum', 'role:admin|employer'])->group(function () {
     Route::patch('/jobs/{id}/status', [JobPostingController::class, 'changeJobStatus']);     
+    Route::patch('/applications/{id}/status', [ApplicationController::class, 'updateApplicationStatus']); 
 });
 
 // job seeker routes
