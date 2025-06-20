@@ -59,8 +59,12 @@ Route::prefix('employer')->group(function () {
     Route::middleware('employer')->group(function () {
         // auth
         Route::post('/logout', [UserAuthController::class, 'logoutEmployer']);    
-                
-        Route::get('/applications/by-job/{id}', [ApplicationController::class, 'getApplicationsByJobForEmployer']);    
+        
+        // employer profile        
+        Route::post('/profile/{id}', [UserController::class, 'updateEmployerProfile']);
+
+        // application status
+        Route::get('/applications/by-job/{id}', [ApplicationController::class, 'getApplicationsByJobForEmployer']);            
 
         // job posting
         Route::prefix('jobs')->group(function () {

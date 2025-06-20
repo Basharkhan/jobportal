@@ -1,9 +1,14 @@
 <?php
 namespace App\Services;
 
+use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Str;
 
 class UserService {
     public function __construct(protected UserRepository $userRepository) {        
@@ -84,4 +89,35 @@ class UserService {
 
         return $this->userRepository->changeJobSeekerStatus($id, $status);
     }
+
+    public function updateEmployerProfile(int $id, array $data): ?User {
+        $user = $this->getUserById($id);
+
+        if (!$user->isEmployer()) {
+            throw new NotFoundHttpException("User with ID {$id} is not an employer.");
+        }
+
+        if (isset($data['name'])) {
+            $user->name = $data['name'];
+            $user->save();
+        }
+
+        $companyData = Arr::except($data, ['name']);
+
+        if (isset($data['logo']) && $data['logo'] instanceof UploadedFile) {
+            $companyProfile = $user->companyProfile;
+
+            if ($companyProfile->logo && Storage::disk('public')->exists('logos/' . $companyProfile->logo)) {
+                Storage::disk('public')->delete('logos/' . $companyProfile->logo);
+            }
+
+            $extension = $data['logo']->getClientOriginalExtension();
+            $filename = Str::uuid() . '.' . $extension;
+            $data['logo']->storeAs('logos', $filename, 'public');
+            $companyData['logo'] = $filename;
+        }
+
+        return $this->userRepository->updateEmployerProfile($user, $companyData);
+    }
+
 }

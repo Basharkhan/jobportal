@@ -1,9 +1,15 @@
 <?php
 namespace App\Repositories;
 
+use App\Models\CompanyProfile;
 use App\Models\User;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 class UserRepository implements UserRepositoryInterface {
     public function getAllAdmins(int $perPage = 10): LengthAwarePaginator {
@@ -56,6 +62,11 @@ class UserRepository implements UserRepositoryInterface {
         $user = User::has('seekerProfile')->findOrFail($id);
         $user->seekerProfile()->update(['status' => $status]);        
         return $user->load('seekerProfile');
+    }
+
+   public function updateEmployerProfile(User $user, array $data): ?User {
+        $user->companyProfile()->update($data);
+        return $user->load('companyProfile');
     }
 }
 

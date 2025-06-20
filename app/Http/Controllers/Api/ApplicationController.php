@@ -134,7 +134,7 @@ class ApplicationController {
     public function updateApplicationStatus(int $id, Request $request) {
         try {
             $status = $request->input('status');
-            if (!in_array($status, ['pending', 'accepted', 'rejected'])) {
+            if (!in_array($status, ['pending', 'reviewed', 'hired', 'rejected'])) {
                 return response()->json([
                     'status' => 'error',
                     'message' => 'Invalid status'
