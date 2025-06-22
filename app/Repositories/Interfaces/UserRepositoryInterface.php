@@ -28,4 +28,6 @@ interface UserRepositoryInterface {
     public function changeJobSeekerStatus(int $id, int $status): ?User;
 
     public function updateEmployerProfile(User $user, array $data): ?User;
+
+    public function updateJobSeekerProfile(User $user, array $data): ?User;
 }

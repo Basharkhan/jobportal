@@ -94,6 +94,9 @@ Route::prefix('job-seeker')->group(function () {
         // auth
         Route::post('/logout', [UserAuthController::class, 'logoutUser']);
         
+        // job seeker profile
+        Route::post('/profile/{id}', [UserController::class, 'updateJobSeekerProfile']);
+
         // Application routes
         Route::prefix('applications')->group(function () {
             Route::post('/', [ApplicationController::class, 'store']);

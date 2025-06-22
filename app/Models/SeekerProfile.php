@@ -9,6 +9,7 @@ class SeekerProfile extends Model {
     protected $fillable = [
         'user_id',
         'resume_path',
+        'resume',
         'skills',        
         'bio',
         'phone',

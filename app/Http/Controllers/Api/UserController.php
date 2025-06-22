@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\UpdateEmployerProfileRequest;
+use App\Http\Requests\UpdateJobSeekerProfileRequest;
 use App\Services\UserService;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
@@ -303,6 +304,37 @@ class UserController {
             return response()->json([
                 'success' => false,
                 'message' => 'Failed to update employer profile'
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function updateJobSeekerProfile(int $id, UpdateJobSeekerProfileRequest $request) {
+        try {                             
+            $resumeFile = $request->file('resume');
+            $data = $request->validated();
+
+            if ($resumeFile) {
+                $data['resume'] = $resumeFile;
+            }
+
+            $user = $this->userService->updateJobSeekerProfile($id, $data);
+
+            return response()->json([
+                'success' => true,
+                'data' => $user
+            ], Response::HTTP_OK);
+        } catch(ValidationException $e) {
+            throw $e; 
+        } catch (NotFoundHttpException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], Response::HTTP_NOT_FOUND);
+        } catch (Exception $e) {
+            Log::error('Error updating job seeker profile: ' . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to update job seeker profile'
             ], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

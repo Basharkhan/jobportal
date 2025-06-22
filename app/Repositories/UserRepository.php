@@ -68,5 +68,10 @@ class UserRepository implements UserRepositoryInterface {
         $user->companyProfile()->update($data);
         return $user->load('companyProfile');
     }
+
+    public function updateJobSeekerProfile(User $user, array $data): ?User {
+        $user->seekerProfile()->update($data);
+        return $user->load('seekerProfile');
+    }
 }
 

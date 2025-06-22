@@ -120,4 +120,34 @@ class UserService {
         return $this->userRepository->updateEmployerProfile($user, $companyData);
     }
 
+
+    public function updateJobSeekerProfile(int $id, array $data): ?User {
+        $user = $this->getUserById($id);
+
+        if (!$user->isJobSeeker()) {
+            throw new NotFoundHttpException("User with ID {$id} is not a job seeker.");
+        }
+
+        if (isset($data['name'])) {
+            $user->name = $data['name'];
+            $user->save();
+        }
+
+        $seekerData = Arr::except($data, ['name']);
+
+        if (isset($data['resume']) && $data['resume'] instanceof UploadedFile) {
+            $seekerProfile = $user->seekerProfile;
+
+            if ($seekerProfile->resume && Storage::disk('public')->exists('resumes/' . $seekerProfile->resume)) {
+                Storage::disk('public')->delete('resumes/' . $seekerProfile->resume);
+            }
+
+            $extension = $data['resume']->getClientOriginalExtension();
+            $filename = Str::uuid() . '.' . $extension;
+            $data['resume']->storeAs('resumes', $filename, 'public');
+            $seekerData['resume'] = $filename;
+        }
+
+        return $this->userRepository->updateJobSeekerProfile($user, $seekerData);
+    }
 }
