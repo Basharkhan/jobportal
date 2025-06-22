@@ -24,7 +24,7 @@ class UpdateJobSeekerProfileRequest extends FormRequest
         return [
             'name' => 'nullable|string|max:255',            
             'resume' => 'nullable|file|mimes:pdf,doc,docx|max:2048',
-            'skills' => 'nullable|array',
+            'skills' => 'nullable|string',
             'bio' => 'nullable|string|max:500',
             'phone' => 'nullable|string|max:15',
             'location' => 'nullable|string|max:255',
@@ -36,7 +36,7 @@ class UpdateJobSeekerProfileRequest extends FormRequest
             'linkedin' => 'nullable|url|max:255',
             'github' => 'nullable|url|max:255',
             'certifications' => 'nullable|string|max:500',
-            'languages' => 'nullable|array',
+            'languages' => 'nullable|string',
 
             // Optionally, reject any unexpected fields
             '*' => function ($attribute, $value, $fail) {

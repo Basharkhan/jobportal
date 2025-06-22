@@ -310,11 +310,10 @@ class UserController {
 
     public function updateJobSeekerProfile(int $id, UpdateJobSeekerProfileRequest $request) {
         try {                             
-            $resumeFile = $request->file('resume');
-            $data = $request->validated();
+            $data = $request->validated();                     
 
-            if ($resumeFile) {
-                $data['resume'] = $resumeFile;
+            if ($request->hasFile('resume')) {
+                $data['resume'] = $request->file('resume');
             }
 
             $user = $this->userService->updateJobSeekerProfile($id, $data);
