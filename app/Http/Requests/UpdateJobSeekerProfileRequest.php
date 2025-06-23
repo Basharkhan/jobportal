@@ -38,6 +38,9 @@ class UpdateJobSeekerProfileRequest extends FormRequest
             'certifications' => 'nullable|string|max:500',
             'languages' => 'nullable|string',
 
+            'experiences' => 'nullable|json',
+            'educations' => 'nullable|json',
+
             // Optionally, reject any unexpected fields
             '*' => function ($attribute, $value, $fail) {
                 $allowedFields = [
@@ -56,6 +59,8 @@ class UpdateJobSeekerProfileRequest extends FormRequest
                     'github',
                     'certifications',
                     'languages',
+                    'experiences',
+                    'educations'
                 ];
                 
                 if (!in_array($attribute, $allowedFields)) {
@@ -63,5 +68,12 @@ class UpdateJobSeekerProfileRequest extends FormRequest
                 }
             }
         ];
+    }
+
+    public function passedValidation() {
+        $this->merge([
+            'experiences' => $this->input('experiences') ? json_decode($this->input('experiences'), true) : [],
+            'educations' => $this->input('educations') ? json_decode($this->input('educations'), true) : [],       
+        ]);
     }
 }

@@ -308,10 +308,20 @@ class UserController {
         }
     }
 
-    public function updateJobSeekerProfile(int $id, UpdateJobSeekerProfileRequest $request) {
+    public function updateJobSeekerProfile(int $id, UpdateJobSeekerProfileRequest $request) {        
         try {                             
             $data = $request->validated();                     
 
+            // Convert JSON strings to arrays if needed
+            if (isset($data['experiences']) && is_string($data['experiences'])) {
+                $data['experiences'] = json_decode($data['experiences'], true);
+            }
+            
+            if (isset($data['educations']) && is_string($data['educations'])) {
+                $data['educations'] = json_decode($data['educations'], true);
+            }
+            
+            // Handle file upload
             if ($request->hasFile('resume')) {
                 $data['resume'] = $request->file('resume');
             }

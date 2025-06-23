@@ -3,11 +3,13 @@ namespace App\Services;
 
 use App\Models\User;
 use App\Repositories\UserRepository;
+use Exception;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class UserService {
@@ -121,33 +123,34 @@ class UserService {
     }
 
 
-    public function updateJobSeekerProfile(int $id, array $data): ?User {
+    public function updateJobSeekerProfile(int $id, array $data): ?User {        
         $user = $this->getUserById($id);
 
         if (!$user->isJobSeeker()) {
             throw new NotFoundHttpException("User with ID {$id} is not a job seeker.");
         }
 
-        if (isset($data['name'])) {
-            $user->name = $data['name'];
-            $user->save();
-        }
-
-        $seekerData = Arr::except($data, ['name']);
-
+        // handle file upload
         if (isset($data['resume']) && $data['resume'] instanceof UploadedFile) {
-            $seekerProfile = $user->seekerProfile;
-
-            if ($seekerProfile->resume && Storage::disk('public')->exists('resumes/' . $seekerProfile->resume)) {
-                Storage::disk('public')->delete('resumes/' . $seekerProfile->resume);
-            }
-
-            $extension = $data['resume']->getClientOriginalExtension();
-            $filename = Str::uuid() . '.' . $extension;
-            $data['resume']->storeAs('resumes', $filename, 'public');
-            $seekerData['resume'] = $filename;
+            $data = $this->handleResumeUpload($user, $data);
         }
 
-        return $this->userRepository->updateJobSeekerProfile($user, $seekerData);
+        return $this->userRepository->updateJobSeekerProfile($user, $data);
+    }
+
+    protected function handleResumeUpload(User $user, array $data): array {
+        $profile = $user->seekerProfile;
+        
+        // delete old resume if exists
+        if ($profile->resume && Storage::disk('public')->exists('resumes/' . $profile->resume)) {
+            Storage::disk('public')->delete('resumes/' . $profile->resume);
+        }
+        
+        // store new resume
+        $extension = $data['resume']->getClientOriginalExtension();
+        $filename = Str::uuid() . '.' . $extension;
+        $data['resume']->storeAs('resumes', $filename, 'public');
+        
+        return array_merge($data, ['resume' => $filename]);
     }
 }

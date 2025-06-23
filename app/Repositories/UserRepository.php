@@ -2,6 +2,7 @@
 namespace App\Repositories;
 
 use App\Models\CompanyProfile;
+use App\Models\SeekerProfile;
 use App\Models\User;
 use App\Repositories\Interfaces\UserRepositoryInterface;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -69,9 +70,78 @@ class UserRepository implements UserRepositoryInterface {
         return $user->load('companyProfile');
     }
 
-    public function updateJobSeekerProfile(User $user, array $data): ?User {
-        $user->seekerProfile()->update($data);
-        return $user->load('seekerProfile');
+    public function updateJobSeekerProfile(User $user, array $data): ?User {        
+        DB::transaction(function () use ($user, $data) {
+            // update user basic info
+            if(isset($data['name'])) {
+                $user->update(['name' => $data['name']]);
+            }
+
+            // handle profile data without relations
+            $profileData = Arr::except($data, ['name', 'experiences', 'educations']);
+            $user->seekerProfile()->updateOrCreate([], $profileData);
+
+            // handle relations if present
+            if(isset($data['experiences']) || isset($data['educations'])) {
+                $this->updateSeekerProfileRelations($user->seekerProfile, $data);
+            }
+        });
+        
+        return $user->load('seekerProfile.experiences', 'seekerProfile.educations');
+    }
+
+    public function updateSeekerProfileRelations(SeekerProfile $profile, array $data) {
+        if (isset($data['experiences']) && is_array($data['experiences'])) {
+            $this->syncExperiences($profile, $data['experiences']);
+        }
+
+        if (isset($data['educations']) && is_array($data['educations'])) {
+            $this->syncEducations($profile, $data['educations']);
+        }
+    }
+
+    protected function syncExperiences(SeekerProfile $profile, array $experiences) {
+        $existingIds = [];
+
+        foreach($experiences as $exp) {
+            $experience = $profile->experiences()->updateOrCreate(
+                ['id' => $exp['id'] ?? null],
+                Arr::only($exp, [                    
+                    'job_title',
+                    'company_name',
+                    'location',
+                    'start_date',
+                    'end_date',
+                    'is_current',
+                    'description'
+                ])
+            );
+            $existingIds[] = $experience->id;
+        }
+
+        $profile->experiences()->whereNotIn('id', $existingIds)->delete();
+    }
+
+     protected function syncEducations(SeekerProfile $profile, array $educations) {
+        $existingIds = [];
+        
+        foreach ($educations as $edu) {
+            $education = $profile->educations()->updateOrCreate(
+                ['id' => $edu['id'] ?? null],
+                Arr::only($edu, [
+                    'degree',
+                    'institution_name',
+                    'field_of_study',
+                    'start_date',
+                    'end_date',
+                    'grade',
+                    'description'
+                ])
+            );
+            $existingIds[] = $education->id;
+        }
+        
+        $profile->educations()->whereNotIn('id', $existingIds)->delete();
     }
 }
 
